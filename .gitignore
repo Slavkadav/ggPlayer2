@@ -1,0 +1,8 @@
+
+.gitignore
+.gitignore.js
+.idea/
+dist/
+node_modules/
+src/**/*.js.map
+src/**/*.js
