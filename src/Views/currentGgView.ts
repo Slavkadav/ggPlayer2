@@ -3,7 +3,7 @@ import {ggPlayer} from "../ggPlayer";
 import {PlayerEvents} from "../PlayerEvents";
 
 export class currentGgView extends ggView {
-    private readonly html: string =
+    private readonly html: string =  // TODO: templateUrl
         `<div class="daily-clip-wrap">
             <gg-clips-carousel clips="[{&quot;id&quot;:368640,&quot;title&quot;:&quot;\u0414\u041e\u0411\u0420\u0415\u0419\u0428\u0418\u0419 \u0414\u0415\u041d\u0401\u0427\u0415\u041a&quot;,&quot;author&quot;:&quot;Jonk&quot;,&quot;link&quot;:&quot;\/clip\/368640\/&quot;,&quot;cqty&quot;:1,&quot;views&quot;:993,&quot;game&quot;:&quot;Playerunknown's Battlegrounds&quot;,&quot;streamer&quot;:&quot;BuHorPaduHa&quot;,&quot;avatar&quot;:&quot;\/files\/avatars\/av_104658_n7yA.jpg&quot;,&quot;preview&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/previews\/18482_1496583295155.jpg&quot;,&quot;src&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/18482_1496583295155.mp4&quot;,&quot;watched&quot;:0,&quot;created&quot;:1496583293,&quot;rating&quot;:null},{&quot;id&quot;:368757,&quot;title&quot;:&quot;PUBG - https:\/\/pubg.me\/player\/ilame_ru&quot;,&quot;author&quot;:&quot;Interio&quot;,&quot;link&quot;:&quot;\/clip\/368757\/&quot;,&quot;cqty&quot;:1,&quot;views&quot;:507,&quot;game&quot;:&quot;Playerunknown's Battlegrounds&quot;,&quot;streamer&quot;:&quot;iLame_ru&quot;,&quot;avatar&quot;:&quot;\/files\/avatars\/av_398575_Z1z4.png&quot;,&quot;preview&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/previews\/39803_1496590328320.jpg&quot;,&quot;src&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/39803_1496590328320.mp4&quot;,&quot;watched&quot;:0,&quot;created&quot;:1496593990,&quot;rating&quot;:null},{&quot;id&quot;:365147,&quot;title&quot;:&quot;\u0422\u0440\u0430\u043d\u0441\u043f\u043e\u0440\u0442 4:0 \u0411\u043e\u0431\u0435\u0440&quot;,&quot;author&quot;:&quot;Truhel&quot;,&quot;link&quot;:&quot;\/clip\/365147\/&quot;,&quot;cqty&quot;:0,&quot;views&quot;:375,&quot;game&quot;:&quot;Playerunknown's Battlegrounds&quot;,&quot;streamer&quot;:&quot;Miker&quot;,&quot;avatar&quot;:&quot;\/files\/avatars\/av_1_BObO.gif&quot;,&quot;preview&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/previews\/6_1495735682679.jpg&quot;,&quot;src&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/6_1495735682679.mp4&quot;,&quot;watched&quot;:0,&quot;created&quot;:1495735704,&quot;rating&quot;:null}]" class="ng-isolate-scope">
     <div class="info-col">
@@ -198,7 +198,7 @@ export class currentGgView extends ggView {
     }
 
     private init() {
-        this.playButton = this.placeHolder.querySelector('.play-pause');
+        this.playButton = this.placeHolder.querySelector('.play-pause');    // TODO: Раздели на разные функции присваивание ссылок и отдельно биндинг событий
         this.playButton.addEventListener('click', () => this.playToggle());
 
         this.volumeBar = this.placeHolder.querySelector('.sound-block');
@@ -211,17 +211,17 @@ export class currentGgView extends ggView {
         this.player.on(PlayerEvents.PLAY, () => this.playButton.classList.remove('active'));
         this.player.on(PlayerEvents.PAUSE, () => this.playButton.classList.add('active'));
 
-        this.player.on(PlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute'));
+        this.player.on(PlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute')); // TODO: А начальное состояние какое?
     }
 
 
 
 
-    private moveSeekHandle(e) {
+    private moveSeekHandle(e) {   // TODO: Сделай отдельный компонент и вынеси логику отдельно
         let sliderRange = <HTMLElement>this.volumeBar.querySelector('.slider-range');
         let handle = <HTMLElement>this.volumeBar.querySelector('.handle');
         let rect = this.volumeBar.querySelector('.progress-sound').getBoundingClientRect();
-        let moveAt = (e: any) => {
+        let moveAt = (e: any) => { // TODO: В новом компоненте сделай это методом класса, а не анонимной функцией
             let handleLeft = (e.pageX - rect.left - handle.offsetWidth / 2);
             let sliderRight = (e.pageX - rect.left - handle.offsetWidth / 2);
             if (handleLeft < 0) {
@@ -250,7 +250,7 @@ export class currentGgView extends ggView {
         this.volumeBar.addEventListener('mousemove', (e: any) => moveAt(e));
 
         document.addEventListener('mouseup', (e: any) => {
-            document.onmouseup = null;
+            document.onmouseup = null;    // TODO: Никаких onmouseup, только эвенты!
             }
         )
     }

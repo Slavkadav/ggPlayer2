@@ -16,7 +16,7 @@ export class MyView extends ggView {
     private volumeBar: HTMLInputElement;
     private parentElement;
 
-    private readonly htmlText: string =
+    private readonly htmlText: string =  // TODO: тут htmlText, там html
         `<div class="controls">
             <input type="range" class="seekBar" value="0">
             <button type="button" class="play">Play</button>

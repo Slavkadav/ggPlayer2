@@ -1,7 +1,7 @@
 import {ggPlayer} from "../ggPlayer";
 
 
-export abstract class ggVideo{
+export abstract class ggVideo{ // TODO: Coding Style
     protected parentElement : Element;
     protected player : ggPlayer;
     protected videoElement:HTMLVideoElement;
