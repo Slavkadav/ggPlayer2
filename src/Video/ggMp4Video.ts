@@ -8,7 +8,7 @@ import {PlayerEvents} from "../PlayerEvents";
 export class ggMp4Video extends ggVideo{
 
 
-    constructor(videoURL:string,parentElement:Element,player:ggPlayer){
+    constructor(videoURL:string,parentElement:Element,player:ggPlayer){ // TODO: Coding Style
         super(parentElement,player);
         this.videoElement.src = videoURL;
 

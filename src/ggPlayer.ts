@@ -4,10 +4,10 @@ import {ggView} from "./Views/ggView";
 import {ggVideo} from "./Video/ggVideo";
 import {ggMp4Video} from "./Video/ggMp4Video";
 import {MyView} from "./Views/MyView";
-import {currentGgView} from "./Views/currentGgView";
+import {currentGgView} from "./Views/currentGgView";  // TODO: Все классы называются gg..., а этот почему-то не такой
 
 
-export class ggPlayer extends EventEmitter{
+export class ggPlayer extends EventEmitter{  // TODO: Название класса должно начинаться с большой буквы!
 
     private playing : boolean;
     private muted: boolean;
@@ -20,18 +20,18 @@ export class ggPlayer extends EventEmitter{
 
     constructor(parent: string) {
         super();
-        this.parentElement = document.querySelector("." + parent);
+        this.parentElement = document.querySelector("." + parent); // TODO: Никаких селекторов, пускай передается уже ссылка на элемент
         this.muted = false;
         this.playing = false;
         this.fullscreen = false;
     }
 
-    setPlayerView(view : ggView):void{this.view=view};
+    setPlayerView(view : ggView):void{this.view=view}; // TODO: Coding Style
 
 
     initVideo(videoUrl:string):void{
-        this.setPlayerView(new currentGgView(this.parentElement,this));
-        this.video = new ggMp4Video(videoUrl,document.querySelector('.video'),this);
+        this.setPlayerView(new currentGgView(this.parentElement,this));              // TODO: Почему тут setPlayerView(),
+        this.video = new ggMp4Video(videoUrl,document.querySelector('.video'),this); // TODO: а тут просто присваивание?
     }
 
     public play():void{
