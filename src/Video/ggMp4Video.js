@@ -11,44 +11,38 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ggVideo_1 = require("./ggVideo");
-var PlayerEvents_1 = require("../PlayerEvents");
 /**
  * Created by ggdev on 05.06.17.
  */
-var ggMp4Video = (function (_super) {
-    __extends(ggMp4Video, _super);
-    function ggMp4Video(videoURL, parentElement, player) {
+var GgMp4Video = (function (_super) {
+    __extends(GgMp4Video, _super);
+    function GgMp4Video(videoURL, parentElement, player) {
         var _this = _super.call(this, parentElement, player) || this;
         _this.videoElement.src = videoURL;
         _this.addPlayerListeners();
         return _this;
     }
-    ggMp4Video.prototype.play = function () {
-        this.player.play();
+    GgMp4Video.prototype.play = function () {
+        this.videoElement.play();
     };
-    ggMp4Video.prototype.pause = function () {
-        this.player.pause();
+    GgMp4Video.prototype.pause = function () {
+        this.videoElement.pause();
     };
-    ggMp4Video.prototype.mute = function () {
-        this.player.muteToggle();
+    GgMp4Video.prototype.mute = function () {
+        this.videoElement.muted = this.player.isMuted();
     };
-    ggMp4Video.prototype.changeVolume = function (value) {
-        this.player.setVolume(value);
+    GgMp4Video.prototype.changeVolume = function (value) {
+        this.videoElement.volume = value;
     };
-    ggMp4Video.prototype.setFullscreen = function () {
-        this.player.setFullscreen(true);
+    GgMp4Video.prototype.setFullscreen = function () {
+        this.videoElement.requestFullscreen();
     };
-    ggMp4Video.prototype.seek = function (value) {
+    GgMp4Video.prototype.seek = function (value) {
         this.videoElement.currentTime = value;
     };
-    ggMp4Video.prototype.addPlayerListeners = function () {
-        var _this = this;
-        this.player.on(PlayerEvents_1.PlayerEvents.PLAY, function () { return _this.videoElement.play(); });
-        this.player.on(PlayerEvents_1.PlayerEvents.PAUSE, function () { return _this.videoElement.pause(); });
-        this.player.on(PlayerEvents_1.PlayerEvents.SEEK, function (value) { return _this.seek(value); });
-        this.player.on(PlayerEvents_1.PlayerEvents.CHANGE_VOLUME, function (value) { return _this.videoElement.volume = value; });
+    GgMp4Video.prototype.addPlayerListeners = function () {
     };
-    return ggMp4Video;
-}(ggVideo_1.ggVideo));
-exports.ggMp4Video = ggMp4Video;
+    return GgMp4Video;
+}(ggVideo_1.GgVideo));
+exports.GgMp4Video = GgMp4Video;
 //# sourceMappingURL=ggMp4Video.js.map

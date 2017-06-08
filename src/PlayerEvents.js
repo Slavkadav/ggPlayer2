@@ -14,5 +14,6 @@ PlayerEvents.MUTE_TOGGLE = 'muteToggle';
 PlayerEvents.SEEK = 'seek';
 PlayerEvents.CHANGE_VOLUME = 'changeVolume';
 PlayerEvents.FULLSCREEN_CHANGE = 'fullscreenChange';
+PlayerEvents.CHANGE_QUALITY = 'changeQuality';
 exports.PlayerEvents = PlayerEvents;
 //# sourceMappingURL=PlayerEvents.js.map

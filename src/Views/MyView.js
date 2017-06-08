@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var ggView_1 = require("./ggView");
+var GgView_1 = require("./GgView");
 var PlayerEvents_1 = require("../PlayerEvents");
 /**
  * Created by ggdev on 05.06.17.
@@ -65,6 +65,6 @@ var MyView = (function (_super) {
         this.volumeBar.value = value.toString();
     };
     return MyView;
-}(ggView_1.ggView));
+}(GgView_1.GgView));
 exports.MyView = MyView;
 //# sourceMappingURL=MyView.js.map

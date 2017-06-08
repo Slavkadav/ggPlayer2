@@ -1,9 +1,9 @@
-import {ggView} from "./ggView";
-import {ggPlayer} from "../ggPlayer";
+import {GgView} from "./GgView";
+import {GgPlayer} from "../GgPlayer";
 import {PlayerEvents} from "../PlayerEvents";
 
-export class currentGgView extends ggView {
-    private readonly html: string =  // TODO: templateUrl
+export class GgCurrentView extends GgView {
+    private readonly html: string =
         `<div class="daily-clip-wrap">
             <gg-clips-carousel clips="[{&quot;id&quot;:368640,&quot;title&quot;:&quot;\u0414\u041e\u0411\u0420\u0415\u0419\u0428\u0418\u0419 \u0414\u0415\u041d\u0401\u0427\u0415\u041a&quot;,&quot;author&quot;:&quot;Jonk&quot;,&quot;link&quot;:&quot;\/clip\/368640\/&quot;,&quot;cqty&quot;:1,&quot;views&quot;:993,&quot;game&quot;:&quot;Playerunknown's Battlegrounds&quot;,&quot;streamer&quot;:&quot;BuHorPaduHa&quot;,&quot;avatar&quot;:&quot;\/files\/avatars\/av_104658_n7yA.jpg&quot;,&quot;preview&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/previews\/18482_1496583295155.jpg&quot;,&quot;src&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/18482_1496583295155.mp4&quot;,&quot;watched&quot;:0,&quot;created&quot;:1496583293,&quot;rating&quot;:null},{&quot;id&quot;:368757,&quot;title&quot;:&quot;PUBG - https:\/\/pubg.me\/player\/ilame_ru&quot;,&quot;author&quot;:&quot;Interio&quot;,&quot;link&quot;:&quot;\/clip\/368757\/&quot;,&quot;cqty&quot;:1,&quot;views&quot;:507,&quot;game&quot;:&quot;Playerunknown's Battlegrounds&quot;,&quot;streamer&quot;:&quot;iLame_ru&quot;,&quot;avatar&quot;:&quot;\/files\/avatars\/av_398575_Z1z4.png&quot;,&quot;preview&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/previews\/39803_1496590328320.jpg&quot;,&quot;src&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/39803_1496590328320.mp4&quot;,&quot;watched&quot;:0,&quot;created&quot;:1496593990,&quot;rating&quot;:null},{&quot;id&quot;:365147,&quot;title&quot;:&quot;\u0422\u0440\u0430\u043d\u0441\u043f\u043e\u0440\u0442 4:0 \u0411\u043e\u0431\u0435\u0440&quot;,&quot;author&quot;:&quot;Truhel&quot;,&quot;link&quot;:&quot;\/clip\/365147\/&quot;,&quot;cqty&quot;:0,&quot;views&quot;:375,&quot;game&quot;:&quot;Playerunknown's Battlegrounds&quot;,&quot;streamer&quot;:&quot;Miker&quot;,&quot;avatar&quot;:&quot;\/files\/avatars\/av_1_BObO.gif&quot;,&quot;preview&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/previews\/6_1495735682679.jpg&quot;,&quot;src&quot;:&quot;https:\/\/storage2.goodgame.ru\/clips\/6_1495735682679.mp4&quot;,&quot;watched&quot;:0,&quot;created&quot;:1495735704,&quot;rating&quot;:null}]" class="ng-isolate-scope">
     <div class="info-col">
@@ -61,7 +61,7 @@ export class currentGgView extends ggView {
     <div class="video-inner">
         <gg-player-loading loading="player.loading" class="ng-isolate-scope"><div class="loader" style="display: none"><div class="load-status">Подождите, идет обработка клипа</div></div></gg-player-loading>
         <div class="video">
-            <!-- ngIf: !player.loading --><gg-html5-video src="player.src" play="player.play" poster="player.poster" volume="player.volume" position="player.position" duration="player.duration" loaded="player.loaded" set-position="player.setPosition" ng-if="!player.loading" class="ng-scope ng-isolate-scope"><div class="poster-faded"></div><video ng-click="video.togglePlay()" poster="https://storage2.goodgame.ru/clips/previews/18482_1496583295155.jpg" loop="" preload="none" ng-src="https://storage2.goodgame.ru/clips/18482_1496583295155.mp4" src="https://storage2.goodgame.ru/clips/18482_1496583295155.mp4"></video></gg-html5-video><!-- end ngIf: !player.loading -->
+            <!-- ngIf: !player.loading --><div class="poster-faded"></div><!-- end ngIf: !player.loading -->
         </div>
 
         <!-- ngIf: player.adult==1 -->
@@ -190,69 +190,81 @@ export class currentGgView extends ggView {
     private playButton: Element;
     private volumeBar: Element;
     private muteToggle: Element;
+    private isDragging: boolean;
+    private clipPlayer: Element;
+    private fullscreenButton: Element;
 
-    constructor(placeHolder: Element, player: ggPlayer) {
+    constructor(placeHolder: Element, player: GgPlayer) {
         super(placeHolder, player);
         placeHolder.innerHTML = this.html;
         this.init();
     }
 
     private init() {
-        this.playButton = this.placeHolder.querySelector('.play-pause');    // TODO: Раздели на разные функции присваивание ссылок и отдельно биндинг событий
+        this.clipPlayer = this.placeHolder.querySelector('.clip-player');
+
+
+        this.playButton = this.placeHolder.querySelector('.play-pause');
         this.playButton.addEventListener('click', () => this.playToggle());
 
         this.volumeBar = this.placeHolder.querySelector('.sound-block');
-        this.volumeBar.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
-
+        this.volumeBar.addEventListener('click', (e) => this.moveAt(e));
+        let handle = <HTMLElement>this.volumeBar.querySelector('.handle');
+        handle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
+        document.addEventListener('mouseup', (e: any) => {
+                this.isDragging = false;
+            }
+        );
 
         this.muteToggle = this.placeHolder.querySelector('.mute-unmute');
         this.muteToggle.addEventListener('click', () => this.player.muteToggle());
 
-        this.player.on(PlayerEvents.PLAY, () => this.playButton.classList.remove('active'));
-        this.player.on(PlayerEvents.PAUSE, () => this.playButton.classList.add('active'));
+        this.player.on(PlayerEvents.PLAY, () => this.playButton.classList.add('active'));
+        this.player.on(PlayerEvents.PAUSE, () => this.playButton.classList.remove('active'));
 
-        this.player.on(PlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute')); // TODO: А начальное состояние какое?
+        this.player.on(PlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute'));
+
+        this.player.on(PlayerEvents.FULLSCREEN_CHANGE,(value)=>this.fullscreenToggle(value));
+
+        this.fullscreenButton = this.placeHolder.querySelector('.state');
+        this.fullscreenButton.addEventListener('click',()=>this.player.setFullscreen(true));
     }
 
 
-
-
-    private moveSeekHandle(e) {   // TODO: Сделай отдельный компонент и вынеси логику отдельно
+    moveAt(e: any) {
+        if (!this.isDragging && e.type !== 'click') return;
         let sliderRange = <HTMLElement>this.volumeBar.querySelector('.slider-range');
-        let handle = <HTMLElement>this.volumeBar.querySelector('.handle');
         let rect = this.volumeBar.querySelector('.progress-sound').getBoundingClientRect();
-        let moveAt = (e: any) => { // TODO: В новом компоненте сделай это методом класса, а не анонимной функцией
-            let handleLeft = (e.pageX - rect.left - handle.offsetWidth / 2);
-            let sliderRight = (e.pageX - rect.left - handle.offsetWidth / 2);
-            if (handleLeft < 0) {
-                handleLeft = 0;
-                sliderRight = 0;
-            }
-            if (sliderRight >= rect.width - handle.offsetWidth) {
-                sliderRight = rect.width;
-            }
-            if (handleLeft >= rect.width - handle.offsetWidth) {
-                handleLeft = rect.width;
-            }
-            if (handleLeft < rect.width / 2) {
-                this.muteToggle.classList.add('half');
-            }
-            if (handleLeft > rect.width / 2) {
-                this.muteToggle.classList.remove('half');
-            }
-            let volumeValue = handleLeft / rect.width;
-            this.player.setVolume(volumeValue);
-            handle.style.left = handleLeft / rect.width * 100 + '%';
-            sliderRange.style.width = sliderRight / rect.width * 100 + '%';
+        let handle = <HTMLElement>this.volumeBar.querySelector('.handle');
 
-        };
-        moveAt(e);
-        this.volumeBar.addEventListener('mousemove', (e: any) => moveAt(e));
+        let handleLeft = (e.pageX - rect.left - handle.offsetWidth / 2);
+        let sliderRight = (e.pageX - rect.left - handle.offsetWidth / 2);
+        if (handleLeft < 0) {
+            handleLeft = 0;
+            sliderRight = 0;
+        }
+        if (sliderRight >= rect.width - handle.offsetWidth) {
+            sliderRight = rect.width;
+        }
+        if (handleLeft >= rect.width - handle.offsetWidth) {
+            handleLeft = rect.width;
+        }
+        if (handleLeft < rect.width / 2) {
+            this.muteToggle.classList.add('half');
+        }
+        if (handleLeft > rect.width / 2) {
+            this.muteToggle.classList.remove('half');
+        }
+        let volumeValue = handleLeft / rect.width;
+        this.player.setVolume(volumeValue);
+        handle.style.left = handleLeft / rect.width * 100 + '%';
+        sliderRange.style.width = sliderRight / rect.width * 100 + '%';
 
-        document.addEventListener('mouseup', (e: any) => {
-            document.onmouseup = null;    // TODO: Никаких onmouseup, только эвенты!
-            }
-        )
+    };
+
+    private moveSeekHandle(e) {
+        this.isDragging = true;
+        document.addEventListener('mousemove', (e: any) => this.moveAt(e));
     }
 
     private playToggle() {
@@ -260,6 +272,23 @@ export class currentGgView extends ggView {
             this.player.pause();
         } else {
             this.player.play();
+        }
+    }
+
+    private fullscreenToggle(value) {
+        if(value===true){
+            if(this.clipPlayer.requestFullscreen){
+                this.clipPlayer.requestFullscreen();
+            }else if(this.clipPlayer.webkitRequestFullScreen){
+                this.clipPlayer.webkitRequestFullScreen();
+            }
+        }
+
+        else{
+            if(document.exitFullscreen)
+                document.exitFullscreen();
+            else if(document.webkitExitFullscreen)
+                document.webkitExitFullscreen();
         }
     }
 }

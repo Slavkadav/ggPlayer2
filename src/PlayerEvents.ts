@@ -8,5 +8,5 @@ export class PlayerEvents{
     static readonly SEEK = 'seek';
     static readonly CHANGE_VOLUME = 'changeVolume';
     static readonly FULLSCREEN_CHANGE = 'fullscreenChange';
-
+    static readonly CHANGE_QUALITY = 'changeQuality';
 }

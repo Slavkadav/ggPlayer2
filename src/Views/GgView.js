@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Created by ggdev on 05.06.17.
  */
-var ggView = (function () {
-    function ggView(placeHolder, player) {
+var GgView = (function () {
+    function GgView(placeHolder, player) {
         this.placeHolder = placeHolder;
         this.player = player;
     }
-    return ggView;
+    return GgView;
 }());
-exports.ggView = ggView;
-//# sourceMappingURL=ggView.js.map
+exports.GgView = GgView;
+//# sourceMappingURL=GgView.js.map
