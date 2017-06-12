@@ -11,11 +11,11 @@ var paths = {
 var watchedBrowserify = watchify(browserify({
     basedir: '.',
     debug: true,
-    entries: ['src/GgPlayer.ts'],
+    entries: ['./src/GgPlayer.ts'],
     cache: {},
     packageCache: {}
 
-}).require('./src/GgPlayer.js',{expose:'GgPlayer'}).plugin(tsify));
+}).require('./src/GgPlayer.ts',{expose:'GgPlayer'}).plugin(tsify));
 
 gulp.task("copy-html", function () {
     return gulp.src(paths.pages)

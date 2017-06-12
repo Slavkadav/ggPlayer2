@@ -2,9 +2,8 @@ import {EventEmitter} from "events";
 import {PlayerEvents} from "./PlayerEvents";
 import {GgView} from "./Views/GgView";
 import {GgVideo} from "./Video/ggVideo";
-import {GgMp4Video} from "./Video/ggMp4Video";
-import {MyView} from "./Views/MyView";
-import {GgCurrentView} from "./Views/currentGgView";  // TODO: Все классы называются gg..., а этот почему-то не такой
+import {GgCurrentView} from "./Views/currentGgView";
+import {GgVideoFactory} from "./Video/ggVideoFactory";  // TODO: Все классы называются gg..., а этот почему-то не такой
 
 
 export class GgPlayer extends EventEmitter {  // TODO: Название класса должно начинаться с большой буквы!
@@ -34,9 +33,12 @@ export class GgPlayer extends EventEmitter {  // TODO: Название клас
 
     initVideo(videoUrl: string): void {
         this.setPlayerView(new GgCurrentView(this.parentElement, this));              // TODO: Почему тут setPlayerView(),
-        this.video = new GgMp4Video(videoUrl, document.querySelector('.video'), this); // TODO: а тут просто присваивание?
+        this.setVideo(new GgVideoFactory().createVideo(videoUrl, document.querySelector('.video'), this)); // TODO: а тут просто присваивание?
     }
 
+    setVideo(video:GgVideo):void{
+        this.video = video;
+    }
 
     public play(): void {
         this.playing = true;

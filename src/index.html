@@ -14,9 +14,9 @@
 
 <script src="bundle.js"></script>
 <script>
-    let x = require('src/GgPlayer');
-    let player = new x.GgPlayer('PlayerPlace');
-    player.initVideo('https://storage2.goodgame.ru/clips/6_1492283247116.mp4');
+    let x = require('GgPlayer');
+    let player = new x.GgPlayer(document.querySelector('.PlayerPlace'));
+    player.initVideo('https://hls.goodgame.ru/hls/pomi.smil');
 </script>
 </body>
 </html>
