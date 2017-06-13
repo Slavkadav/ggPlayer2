@@ -16,6 +16,13 @@ export class GgCurrentView extends GgView {
         if(templateUrl === null ||templateUrl==='') {
             placeHolder.innerHTML = this.html;
         }
+        else{
+           let request = new XMLHttpRequest();
+           request.open("get",templateUrl,true);
+           request.send(null);
+           request.onreadystatechange = ()=> request.readyState==4?
+               this.html = request.responseText : null;
+        }
         this.init();
     }
 
