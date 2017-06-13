@@ -1,4 +1,8 @@
-# Created by .ignore support plugin (hsz.mobi)
 
-# TODO: Не должно быть в репозитории файлов .js .js.map
-# TODO: Заполнить!
+.gitignore
+.gitignore.js
+.idea/
+dist/
+node_modules/
+src/**/*.js.map
+src/**/*.js

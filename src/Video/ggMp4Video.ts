@@ -1,36 +1,36 @@
-import {ggVideo} from "./ggVideo";
-import {ggPlayer} from "../ggPlayer";
+import {GgVideo} from "./ggVideo";
+import {GgPlayer} from "../GgPlayer";
 import {PlayerEvents} from "../PlayerEvents";
 /**
  * Created by ggdev on 05.06.17.
  */
 
-export class ggMp4Video extends ggVideo{
+export class GgMp4Video extends GgVideo{
 
 
-    constructor(videoURL:string,parentElement:Element,player:ggPlayer){ // TODO: Coding Style
+    constructor(videoURL:string,parentElement:Element,player:GgPlayer){ // TODO: Coding Style
         super(parentElement,player);
         this.videoElement.src = videoURL;
 
         this.addPlayerListeners();
     }
     play(): void {
-        this.player.play();
+        this.videoElement.play();
     }
 
     pause(): void {
-        this.player.pause();
+        this.videoElement.pause();
     }
 
     mute(): void {
-        this.player.muteToggle();
+        this.videoElement.muted = this.player.isMuted();
     }
 
     changeVolume(value:number): void {
-        this.player.setVolume(value);
+        this.videoElement.volume = value;
     }
     setFullscreen(): void {
-        this.player.setFullscreen(true);
+        this.videoElement.requestFullscreen();
     }
 
     seek(value:number){
@@ -38,9 +38,6 @@ export class ggMp4Video extends ggVideo{
     }
 
     private addPlayerListeners() {
-        this.player.on(PlayerEvents.PLAY, ()=>this.videoElement.play());
-        this.player.on(PlayerEvents.PAUSE, ()=>this.videoElement.pause());
-        this.player.on(PlayerEvents.SEEK, (value)=>this.seek(value));
-        this.player.on(PlayerEvents.CHANGE_VOLUME,(value:number)=>this.videoElement.volume=value)
+
     }
 }

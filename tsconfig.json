@@ -1,6 +1,6 @@
 {
   "files": [
-    "src/ggPlayer.ts"
+    "src/GgPlayer.ts"
   ],
   "compilerOptions": {
     "module": "commonjs",

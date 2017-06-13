@@ -13,6 +13,10 @@
 </div>
 
 <script src="bundle.js"></script>
-
+<script>
+    let x = require('GgPlayer');
+    let player = new x.GgPlayer(document.querySelector('.PlayerPlace'));
+    player.initVideo('https://hls.goodgame.ru/hls/pomi.smil');
+</script>
 </body>
 </html>

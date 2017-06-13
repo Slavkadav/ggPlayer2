@@ -1,10 +1,10 @@
-import {ggView} from "./ggView";
+import {GgView} from "./GgView";
 import {PlayerEvents} from "../PlayerEvents";
-import {ggPlayer} from "../ggPlayer";
+import {GgPlayer} from "../GgPlayer";
 /**
  * Created by ggdev on 05.06.17.
  */
-export class MyView extends ggView {
+export class MyView extends GgView {
 
     private muteButton: HTMLButtonElement;
     private pauseButton: HTMLButtonElement;
@@ -28,7 +28,7 @@ export class MyView extends ggView {
           </select>
          </div>`;
 
-    constructor(placeHolder: Element, player:ggPlayer) {
+    constructor(placeHolder: Element, player:GgPlayer) {
         super(placeHolder, player);
         this.parentElement = placeHolder;
         this.placeHolder.innerHTML = this.htmlText;

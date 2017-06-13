@@ -3,8 +3,11 @@
   "version": "1.0.1",
   "description": "new version",
   "main": "player.ts",
-  "dependencies": {},
+  "dependencies": {
+    "hls.js": "^0.7.9"
+  },
   "devDependencies": {
+    "@types/hls.js": "^0.7.1",
     "browserify": "^14.4.0",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.1.7",
