@@ -4,30 +4,104 @@ import {PlayerEvents} from "../PlayerEvents";
 import {isUndefined} from "util";
 
 export class GgCurrentView extends GgView {
+
+
     private playButton: Element;
     private volumeBar: Element;
     private muteToggle: Element;
     private isDragging: boolean;
     private clipPlayer: Element;
     private fullscreenButton: Element;
-    private html ='';
-    constructor(placeHolder: Element, player: GgPlayer, templateUrl:string) {
+
+
+    constructor(placeHolder: Element, player: GgPlayer) {
         super(placeHolder, player);
-        if(templateUrl === null ||templateUrl==='') {
-            placeHolder.innerHTML = this.html;
-        }
-        else{
-           let request = new XMLHttpRequest();
-           request.open("get",templateUrl,true);
-           request.send(null);
-           request.onreadystatechange = ()=> request.readyState==4?
-               this.html = request.responseText : null;
-        }
+
+
+//         this.template =
+//             `
+//             <div class="daily-clip-wrap">
+//     <div class="clip-player">
+//         <div class="video-player" data-sound="half" data-fullscreen="false" data-play="false">
+//             <div class="video-inner">
+//                 <div class="video">
+//                     <!-- ngIf: !player.loading -->
+//                     <div class="poster-faded"></div>
+//                     <!-- end ngIf: !player.loading -->
+//                 </div>
+//                 <div class="status-block">
+//                     <span class="icon icon-video-play"></span>
+//                     <span class="icon icon-video-pause"></span>
+//                 </div>
+//                 <div class="bot-block">
+//                     <div class="shadow bot"></div>
+//
+//                     <div class="player-control-bottom">
+//                         <div class="control-inner clearfix">
+//                             <div class="player-button play-pause pull-left">
+//                                 <div class="state play">
+//                                     <div class="tip">Старт</div>
+//                                     <span class="icon icon-video-play"></span>
+//                                 </div>
+//                                 <div class="state pause">
+//                                     <div class="tip">Пауза</div>
+//                                     <span class="icon icon-video-pause"></span>
+//                                 </div>
+//                             </div>
+//                             <div class="sound-block pull-left">
+//                                 <div class="player-button mute-unmute pull-left">
+//                                     <div class="state full">
+//                                         <div class="tip">Без звука</div>
+//                                         <span class="icon icon-video-mute-full"></span>
+//                                     </div>
+//                                     <div class="state half">
+//                                         <div class="tip">Без звука</div>
+//                                         <span class="icon icon-video-mute-half"></span>
+//                                     </div>
+//                                     <div class="state unmute">
+//                                         <div class="tip">Включить звук</div>
+//                                         <span class="icon icon-video-unmute"></span>
+//                                     </div>
+//                                 </div>
+//                                     <div class="sound-bar-block pull-left">
+//                                         <div class="progress-sound">
+//                                             <div class="slider-range" style="width: 75%;"></div>
+//                                             <div class="handle" style="left:75%;"></div>
+//                                         </div>
+//                                     </div>
+//                             </div>
+//                             <div class="pull-right">
+//                                 <div class="player-button pull-left full-exitfull">
+//                                     <div class="state full">
+//                                         <div class="tip">Во весь экран</div>
+//                                         <span class="icon icon-video-fullscreen"></span>
+//                                     </div>
+//                                     <div class="state normal">
+//                                         <div class="tip">Выход из полноэкранного режима</div>
+//                                         <span class="icon icon-video-normalmode"></span>
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//
+//     </div>
+//
+// </div>
+//             `;
+
+        this.templateUrl = './html/template.html';
+
+        this.loadTemplate();
         this.init();
     }
 
+
     private init() {
-        this.clipPlayer = this.placeHolder.querySelector('.clip-player');
+        this.clipPlayer = this.placeHolder.querySelector('.video-player');
 
 
         this.playButton = this.placeHolder.querySelector('.play-pause');
@@ -50,10 +124,10 @@ export class GgCurrentView extends GgView {
 
         this.player.on(PlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute'));
 
-        this.player.on(PlayerEvents.FULLSCREEN_CHANGE,(value)=>this.fullscreenToggle(value));
+        this.player.on(PlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
 
-       // this.fullscreenButton = this.placeHolder.querySelector('.state');
-        //this.fullscreenButton.addEventListener('click',()=>this.player.setFullscreen(true));
+        this.fullscreenButton = this.placeHolder.querySelector('.full-exitfull');
+        this.fullscreenButton.addEventListener('click', () => this.player.setFullscreen(true));
     }
 
 
@@ -102,18 +176,18 @@ export class GgCurrentView extends GgView {
     }
 
     private fullscreenToggle(value) {
-        if(value===true){
-            if(this.clipPlayer.requestFullscreen){
+        if (value === true) {
+            if (this.clipPlayer.requestFullscreen) {
                 this.clipPlayer.requestFullscreen();
-            }else if(this.clipPlayer.webkitRequestFullScreen){
+            } else if (this.clipPlayer.webkitRequestFullScreen) {
                 this.clipPlayer.webkitRequestFullScreen();
             }
         }
 
-        else{
-            if(document.exitFullscreen)
+        else {
+            if (document.exitFullscreen)
                 document.exitFullscreen();
-            else if(document.webkitExitFullscreen)
+            else if (document.webkitExitFullscreen)
                 document.webkitExitFullscreen();
         }
     }

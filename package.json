@@ -8,10 +8,13 @@
   },
   "devDependencies": {
     "@types/hls.js": "^0.7.1",
+    "@types/node": "^7.0.31",
     "browserify": "^14.4.0",
     "gulp": "^3.9.1",
+    "gulp-serve": "^1.4.0",
     "gulp-typescript": "^3.1.7",
     "gulp-util": "^3.0.8",
+    "gulp-webserver": "^0.9.1",
     "tsify": "^3.0.1",
     "typescript": "^2.3.4",
     "vinyl-source-stream": "^1.1.0",
@@ -21,5 +24,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "slavkadav",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Slavkadav/ggPlayer2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Slavkadav/ggPlayer2/issues"
+  },
+  "homepage": "https://github.com/Slavkadav/ggPlayer2#readme"
 }

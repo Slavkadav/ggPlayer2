@@ -52,18 +52,6 @@ export class GgVideoHLS extends GgVideo {
     }
 
 
-
-
-
-    set quality(value: number) {
-        if (value < this.qualityLevels.length && value >= 0) {
-            this.hls.currentLevel = value;
-        }
-        else {
-            this.hls.currentLevel = -1;
-        }
-    }
-
     private setQuality(level: any) {
         if(level < this.qualityLevels.length && level >=0){
             this.hls.currentLevel = level;

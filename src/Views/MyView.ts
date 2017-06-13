@@ -5,6 +5,8 @@ import {GgPlayer} from "../GgPlayer";
  * Created by ggdev on 05.06.17.
  */
 export class MyView extends GgView {
+    loadViewByTemplate(templateUrl) {
+    }
 
     private muteButton: HTMLButtonElement;
     private pauseButton: HTMLButtonElement;
@@ -30,6 +32,9 @@ export class MyView extends GgView {
 
     constructor(placeHolder: Element, player:GgPlayer) {
         super(placeHolder, player);
+
+        this.template = this.htmlText;
+
         this.parentElement = placeHolder;
         this.placeHolder.innerHTML = this.htmlText;
         this.init();
