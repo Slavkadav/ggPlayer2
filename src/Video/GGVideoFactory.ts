@@ -1,22 +1,23 @@
-import {GgMp4Video} from "./ggMp4Video";
-import {GgVideo} from "./ggVideo";
-import {GgVideoHLS} from "./GgHlsVideo";
+import {GGMp4Video} from "./GGMp4Video";
+import {GgVideo} from "./GGVideo";
+import {GGVideoHLS} from "./GGHlsVideo";
 export class GgVideoFactory{
     constructor(){
 
     }
 
     createVideo(videoUrl, parent, player):GgVideo{
+        console.dir(parent);
         let urlSplit = videoUrl.split('.');
         let type = urlSplit[urlSplit.length-1];
         switch (type){
             case 'mp4':
                 console.log('loading mp4 video');
-                return new GgMp4Video(videoUrl,parent, player);
-            // case 'm3u8':
+                return new GGMp4Video(videoUrl, parent, player);
+            case 'm3u8':
              case 'smil':
                  console.log('loading stream');
-                 return new GgVideoHLS(videoUrl,parent,player);
+                 return new GGVideoHLS(videoUrl, parent, player);
             default:
                 return null;
         }

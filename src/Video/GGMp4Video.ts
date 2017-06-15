@@ -1,19 +1,20 @@
-import {GgVideo} from "./ggVideo";
-import {GgPlayer} from "../GgPlayer";
+import {GgVideo} from "./GGVideo";
+import {GGPlayer} from "../GGPlayer";
 import {PlayerEvents} from "../PlayerEvents";
 /**
  * Created by ggdev on 05.06.17.
  */
 
-export class GgMp4Video extends GgVideo{
+export class GGMp4Video extends GgVideo {
 
 
-    constructor(videoURL:string,parentElement:Element,player:GgPlayer){ // TODO: Coding Style
+    constructor(videoURL: string, parentElement: Element, player: GGPlayer) {
         super(parentElement,player);
         this.videoElement.src = videoURL;
 
         this.addPlayerListeners();
     }
+
     play(): void {
         this.videoElement.play();
     }

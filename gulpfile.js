@@ -13,11 +13,11 @@ var paths = {
 var watchedBrowserify = watchify(browserify({
     basedir: '.',
     debug: true,
-    entries: ['./src/GgPlayer.ts'],
+    entries: ['./src/GGPlayer.ts'],
     cache: {},
     packageCache: {}
 
-}).require('./src/GgPlayer.ts', {expose: 'GgPlayer'}).plugin(tsify));
+}).require('./src/GGPlayer.ts', {expose: 'GGPlayer'}).plugin(tsify));
 
 gulp.task("copy-html", function () {
     return gulp.src(paths.pages)
@@ -26,7 +26,7 @@ gulp.task("copy-html", function () {
 
 
 gulp.task('serve', serve({
-    root: ['dist', 'src']
+    root: ['dist', 'src', 'html']
 }));
 
 
@@ -37,6 +37,6 @@ function bundle() {
         .pipe(gulp.dest("dist"));
 }
 
-gulp.task("default", ["copy-html", 'serve'], bundle);
+gulp.task("default", ['serve'], bundle);
 watchedBrowserify.on("update", bundle);
 watchedBrowserify.on("log", gutil.log);

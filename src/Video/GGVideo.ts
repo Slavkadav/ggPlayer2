@@ -1,13 +1,15 @@
-import {GgPlayer} from "../GgPlayer";
+import {GGPlayer} from "../GGPlayer";
 import {PlayerEvents} from "../PlayerEvents";
 
 
-export abstract class GgVideo { // TODO: Coding Style
+export abstract class GgVideo {
     protected parentElement: Element;
-    protected player: GgPlayer;
+    protected player: GGPlayer;
     protected videoElement: HTMLVideoElement;
 
-    constructor(parentElement: Element, player: GgPlayer) {
+    constructor(parentElement: Element, player: GGPlayer) {
+
+
         this.parentElement = parentElement;
         this.player = player;
         this.videoElement = document.createElement('video');

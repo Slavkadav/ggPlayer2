@@ -1,14 +1,14 @@
 import Hls = require("hls.js");
 import {PlayerEvents} from "../PlayerEvents";
-import {GgVideo} from "./ggVideo";
-import {GgPlayer} from "../GgPlayer";
+import {GgVideo} from "./GGVideo";
+import {GGPlayer} from "../GGPlayer";
 
-export class GgVideoHLS extends GgVideo {
+export class GGVideoHLS extends GgVideo {
 
     private hls;
     private qualityLevels;
 
-    constructor(videoURL: string, parentElement: Element, player: GgPlayer) {
+    constructor(videoURL: string, parentElement: Element, player: GGPlayer) {
         super(parentElement, player);
         if (Hls.isSupported()) {
             console.log('hls supported');
@@ -23,7 +23,18 @@ export class GgVideoHLS extends GgVideo {
                 this.qualityLevels = data.levels;
             });
 
+            this.hls.on(Hls.Events.ERROR, (event, data) => {
+                let errorType = data.type;
+                let errorDetails = data.details;
+                let errorFatal = data.fatal;
+
+                console.log('Type: ' + errorType);
+                console.log('Details: ' + errorDetails);
+                console.log('errorFatal: ' + errorFatal);
+            });
+
            this.player.on(PlayerEvents.CHANGE_QUALITY, (level)=>this.setQuality(level));
+
         }
         else {
             alert('Ваш браузер не поддерживает HLS');

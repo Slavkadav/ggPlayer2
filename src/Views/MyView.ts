@@ -1,10 +1,10 @@
-import {GgView} from "./GgView";
+import {GGView} from "./GGView";
 import {PlayerEvents} from "../PlayerEvents";
-import {GgPlayer} from "../GgPlayer";
+import {GGPlayer} from "../GGPlayer";
 /**
  * Created by ggdev on 05.06.17.
  */
-export class MyView extends GgView {
+export class MyView extends GGView {
     loadViewByTemplate(templateUrl) {
     }
 
@@ -30,7 +30,7 @@ export class MyView extends GgView {
           </select>
          </div>`;
 
-    constructor(placeHolder: Element, player:GgPlayer) {
+    constructor(placeHolder: Element, player: GGPlayer) {
         super(placeHolder, player);
 
         this.template = this.htmlText;

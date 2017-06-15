@@ -1,42 +1,49 @@
 import {EventEmitter} from "events";
 import {PlayerEvents} from "./PlayerEvents";
-import {GgView} from "./Views/GgView";
-import {GgVideo} from "./Video/ggVideo";
-import {GgCurrentView} from "./Views/currentGgView";
-import {GgVideoFactory} from "./Video/ggVideoFactory";  // TODO: Все классы называются gg..., а этот почему-то не такой
+import {GGView} from "./Views/GGView";
+import {GgVideo} from "./Video/GGVideo";
+import {GGClipView} from "./Views/GGClipView";
+import {GgVideoFactory} from "./Video/GGVideoFactory";
 
 
-export class GgPlayer extends EventEmitter {  // TODO: Название класса должно начинаться с большой буквы!
+export class GGPlayer extends EventEmitter {
 
     private playing: boolean;
     private muted: boolean;
     private videoTime: number;
     private volume: number;
     private fullscreen: boolean;
-    private view: GgView;
+    private view: GGView;
     private video: GgVideo;
     private parentElement: Element;
     private currentQualityLevel;
 
     constructor(parent: Element) {
         super();
-        this.parentElement = parent; // TODO: Никаких селекторов, пускай передается уже ссылка на элемент
+        this.parentElement = parent;
         this.muted = false;
         this.playing = false;
         this.fullscreen = false;
     }
 
-    setPlayerView(view: GgView): void {
+    setPlayerView(view: GGView): void {
+        console.log('set player view');
         this.view = view
-    }; // TODO: Coding Style
+    };
 
 
     initVideo(videoUrl: string): void {
-        this.setPlayerView(new GgCurrentView(this.parentElement, this));              // TODO: Почему тут setPlayerView(),
-        this.setVideo(new GgVideoFactory().createVideo(videoUrl, document.querySelector('.video'), this)); // TODO: а тут просто присваивание?
+        let view = new GGClipView(this.parentElement, this);
+        view.load().then(() => {
+            this.setPlayerView(view);
+            this.setVideo(new GgVideoFactory().createVideo(videoUrl, document.querySelector('.video'), this));
+        });
+
     }
 
     setVideo(video:GgVideo):void{
+        console.log('set video');
+        console.dir(video);
         this.video = video;
     }
 
