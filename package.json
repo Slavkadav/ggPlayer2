@@ -1,36 +1,24 @@
 {
   "name": "ggplayer",
-  "version": "1.0.1",
-  "description": "new version",
-  "main": "player.ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "GGPlayer.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "rootDir": "dist/lib/",
   "dependencies": {
-    "hls.js": "^0.7.9"
+    "@types/node" : "^8.0.1",
+    "whatwg-fetch":"^2.0.3"
   },
   "devDependencies": {
-    "@types/hls.js": "^0.7.1",
-    "@types/node": "^7.0.31",
-    "browserify": "^14.4.0",
-    "gulp": "^3.9.1",
-    "gulp-serve": "^1.4.0",
-    "gulp-typescript": "^3.1.7",
-    "gulp-util": "^3.0.8",
-    "gulp-webserver": "^0.9.1",
-    "tsify": "^3.0.1",
-    "typescript": "^2.3.4",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.9.0"
+    "@types/node": "^8.0.1"
   },
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "slavkadav",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Slavkadav/ggPlayer2.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Slavkadav/ggPlayer2/issues"
-  },
-  "homepage": "https://github.com/Slavkadav/ggPlayer2#readme"
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
