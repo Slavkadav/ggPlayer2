@@ -7,7 +7,7 @@ export class GGVideoFactory{
     }
 
     createVideo(videoUrl, parent, player):GGVideo{
-        console.dir(parent);
+        console.debug(parent);
         let urlSplit = videoUrl.split('.');
         let type = urlSplit[urlSplit.length-1];
         switch (type){

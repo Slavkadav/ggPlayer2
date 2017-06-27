@@ -1,61 +1,83 @@
-<div class="video-player" data-sound="half" data-fullscreen="false" data-play="false">
-    <div class="video-inner">
-        <div class="video">
-            <!-- ngIf: !player.loading -->
-            <div class="poster-faded"></div>
-            <!-- end ngIf: !player.loading -->
-        </div>
-        <div class="status-block">
-            <span class="icon icon-video-play"></span>
-            <span class="icon icon-video-pause"></span>
-        </div>
-        <div class="bot-block">
-            <div class="shadow bot"></div>
 
-            <div class="player-control-bottom">
-                <div class="control-inner clearfix">
-                    <div class="player-button play-pause pull-left">
-                        <div class="state play">
-                            <div class="tip">Старт</div>
-                            <span class="icon icon-video-play"></span>
-                        </div>
-                        <div class="state pause">
-                            <div class="tip">Пауза</div>
-                            <span class="icon icon-video-pause"></span>
-                        </div>
-                    </div>
-                    <div class="sound-block pull-left">
-                        <div class="player-button mute-unmute pull-left">
-                            <div class="state full">
-                                <div class="tip">Без звука</div>
-                                <span class="icon icon-video-mute-full"></span>
-                            </div>
-                            <div class="state half">
-                                <div class="tip">Без звука</div>
-                                <span class="icon icon-video-mute-half"></span>
-                            </div>
-                            <div class="state unmute">
-                                <div class="tip">Включить звук</div>
-                                <span class="icon icon-video-unmute"></span>
+        <div id="html5player" style="display: block;" class="">
+            <div id="tplggplayer" class="player-block" style="background-color: #000000;" tabindex="1">
+                <div id="_poster" class="off" style="background-image: url(&quot;https://hls.goodgame.ru/previews/32399.jpg&quot;);"></div>
+                <div id="_video" class="on">
+                    
+                </div>
+
+                <div id="_bigPlayBtn" class="play-block" style="display: none;">
+                    <img src="/images/ggplayer/big-play.svg" alt="">
+                </div>
+                <div class="control-block">
+                    <div id="_smallPlayBtn" class="player-control play-wrap active">
+                        <div rel="play" class="on">
+                            <div class="play-btn">
+                                <img src="/images/ggplayer/play.svg" width="14" height="29" alt="">
+                                <div class="popup-block">Старт</div>
                             </div>
                         </div>
-                        <div class="sound-bar-block pull-left">
-                            <div class="progress-sound">
-                                <div class="slider-range" style="width: 75%;"></div>
-                                <div class="handle" style="left:75%;"></div>
+                        <div rel="stop" class="off">
+                            <div class="play-btn">
+                                <img src="/images/ggplayer/pause.svg" alt="">
+                                <div class="popup-block">Пауза</div>
                             </div>
                         </div>
                     </div>
-                    <div class="pull-right">
-                        <div class="player-button pull-left full-exitfull">
-                            <div class="state full">
-                                <div class="tip">Во весь экран</div>
-                                <span class="icon icon-video-fullscreen"></span>
+                    <div id="_muteBtn" class="player-control sound-wrap">
+                        <div class="on">
+                            <div class="play-btn">
+                                <img src="/images/ggplayer/mute.svg" alt="">
+                                <div class="popup-block">Включить звук</div>
                             </div>
-                            <div class="state normal">
-                                <div class="tip">Выход из полноэкранного режима</div>
-                                <span class="icon icon-video-normalmode"></span>
+                        </div>
+                        <div class="off">
+                            <div class="play-btn">
+                                <img src="/images/ggplayer/unmute.svg" alt="">
+                                <div class="popup-block">Без звука</div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="slider-wrap">
+                        <div class="popup-block">Регулировать громкость</div>
+                        <div class="clickable">
+                            <div class="slider-range ui-slider">
+                                <div class="slider-range-value" style="width: 100%;"></div>
+                                <div class="slider-value ui-slider-handle" style="left: 100%;">
+                                    <img src="/images/ggplayer/grip.svg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="_fullscreenBtn" class="player-control screen-wrap">
+                        <div class="on">
+                            <div class="play-btn">
+                                <img src="/images/ggplayer/fullscreen.svg" alt="">
+                                <div class="popup-block">Во весь экран</div>
+                            </div>
+                        </div>
+                        <div class="off">
+                            <div class="play-btn">
+                                <img src="/images/ggplayer/normal-mode.svg" alt="">
+                                <div class="popup-block">Обычный режим</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="_qualitySwitch" class="player-control quality-wrap" style="display: block;">
+                        <div class="quality-block">
+                            <div class="icon">
+                                <img src="/images/ggplayer/quality.svg" alt="">
+                                <span class="quality">М</span>
+                            </div>
+                            <div class="popup-block">Качество видео. Нажмите, чтобы сменить</div>
+                            <ul class="quality-list">
+                                <li><a href="" data-letter="A" style="display: block;" rel="auto">Авто</a></li>
+                                <li><a href="" data-letter="И" rel="premium" class="">Исходное</a></li>
+                                <li><a href="" data-letter="В" rel="720">Высокое</a></li>
+                                <li><a href="" data-letter="С" rel="480">Среднее</a></li>
+                                <li><a href="" data-letter="М" rel="240">Мобильное</a></li>
+                                <li><a href="" data-letter="З" rel="audio">Только звук</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>

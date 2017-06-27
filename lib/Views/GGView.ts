@@ -10,6 +10,7 @@ export abstract class GGView {
 
     constructor(placeHolder: Element, player: GGPlayer) {
         this.placeHolder = placeHolder;
+        console.debug('Placeholder:', placeHolder);
         this.player = player;
     }
 

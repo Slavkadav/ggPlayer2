@@ -4,7 +4,7 @@ import {GGView} from "./Views/GGView";
 import {GGVideo} from "./Video/GGVideo";
 import {GGClipView} from "./Views/GGClipView";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
-
+import {GGStreamView} from "./Views/GGStreamView"
 
 export class GGPlayer extends EventEmitter {
 
@@ -22,37 +22,36 @@ export class GGPlayer extends EventEmitter {
     constructor(parent: Element) {
         super();
         this.parentElement = parent;
+        console.dir('player parent', this.parentElement);
         this.muted = false;
         this.playing = false;
         this.fullscreen = false;
     }
 
     setPlayerView(view: GGView): void {
-        console.log('set player view');
+        console.debug('set player view');
         this.view = view
     };
 
 
     initVideo(videoUrl: string): void {
-        let view = new GGClipView(this.parentElement, this);
+        let view = new GGStreamView(this.parentElement, this);
         view.loadT()
         .then(() => {
             console.log('loadT complete');
             this.setPlayerView(view);
             console.log('view was set');
-            this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('.video'), this));
+            this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('#_video'), this));
         })
-        .then(()=> this.console = document.getElementById('debugConsole') as HTMLElement)
         .catch(()=>console.log.bind(console));
     }
 
     setVideo(video:GGVideo):void{
-        console.log('set video');
-        console.dir(video);
         this.video = video;
     }
 
     public play(): void {
+
         this.playing = true;
         this.emit(PlayerEvents.PLAY);
     }

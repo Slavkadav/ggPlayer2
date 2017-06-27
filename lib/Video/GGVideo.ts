@@ -13,6 +13,10 @@ export abstract class GGVideo {
         this.parentElement = parentElement;
         this.player = player;
         this.videoElement = document.createElement('video');
+
+        this.videoElement.style.width = "100%";
+        this.videoElement.style.height = "100%";
+
         this.parentElement.appendChild(this.videoElement);
 
         this.player.on(PlayerEvents.PLAY, () => this.play());
