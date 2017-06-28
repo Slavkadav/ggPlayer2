@@ -18,18 +18,18 @@ export class GGPlayer extends EventEmitter {
     private parentElement: Element;
     private currentQualityLevel;
     private console : HTMLElement;
+    private autoQuality : boolean;
 
     constructor(parent: Element) {
         super();
         this.parentElement = parent;
-        console.dir('player parent', this.parentElement);
         this.muted = false;
         this.playing = false;
         this.fullscreen = false;
+        this.autoQuality = true;
     }
 
     setPlayerView(view: GGView): void {
-        console.debug('set player view');
         this.view = view
     };
 
@@ -38,9 +38,7 @@ export class GGPlayer extends EventEmitter {
         let view = new GGStreamView(this.parentElement, this);
         view.loadT()
         .then(() => {
-            console.log('loadT complete');
             this.setPlayerView(view);
-            console.log('view was set');
             this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('#_video'), this));
         })
         .catch(()=>console.log.bind(console));
@@ -94,12 +92,20 @@ export class GGPlayer extends EventEmitter {
     }
 
     setQualityLevel(level: number) {
+        console.log('Выбран уровень качества ' + level);
         this.currentQualityLevel = level;
-
         this.emit(PlayerEvents.CHANGE_QUALITY, level);
     }
 
     isFullscreen() : boolean{
         return this.fullscreen;
+    }
+
+    isAutoQuality():boolean{
+        return this.autoQuality;
+    }
+
+    setAutoQuality(value:boolean){
+        this.autoQuality = value;
     }
 }

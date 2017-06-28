@@ -23,6 +23,7 @@ export abstract class GGVideo {
         this.player.on(PlayerEvents.PAUSE, () => this.pause());
         this.player.on(PlayerEvents.SEEK, (value) => this.seek(value));
         this.player.on(PlayerEvents.CHANGE_VOLUME, (value: number) => this.changeVolume(value));
+        this.player.on(PlayerEvents.MUTE_TOGGLE, ()=>this.muteChange());
     }
 
 
@@ -30,7 +31,7 @@ export abstract class GGVideo {
 
     abstract pause(): void;
 
-    abstract mute(): void;
+    abstract muteChange(): void;
 
     abstract setFullscreen(): void;
 

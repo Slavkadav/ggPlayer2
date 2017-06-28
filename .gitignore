@@ -1,4 +1,4 @@
-.gitignore
-.idea/
-dist/
 node_modules/
+dist/
+.vscode/
+.npmignore

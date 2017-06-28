@@ -23,7 +23,7 @@ export class GGMp4Video extends GGVideo {
         this.videoElement.pause();
     }
 
-    mute(): void {
+    muteChange(): void {
         this.videoElement.muted = this.player.isMuted();
     }
 

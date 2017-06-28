@@ -3,6 +3,7 @@ import { GGPlayer } from "../GGPlayer";
 import { PlayerEvents } from "../PlayerEvents";
 
 export class GGStreamView extends GGView {
+  
 
     private playButton: Element;
     private volumeBar: Element;
@@ -10,10 +11,10 @@ export class GGStreamView extends GGView {
     private isDragging: boolean;
     private clipPlayer: Element;
     private fullscreenButton: Element;
-    protected template = `
-            
-        <div id="html5player" style="display: block;" class="">
-            <div id="tplggplayer" class="player-block hover" style="background-color: #000000;" tabindex="1">
+    private qualityLetter: Element;
+    private timer;
+    protected template = `     
+        <div id="tplggplayer" class="player-block" style="background-color: #000000;" tabindex="1">
                 <div id="_poster" class="off" style="background-image: url(&quot;https://hls.goodgame.ru/previews/32399.jpg&quot;);"></div>
                 <div id="_video" class="on">
                     
@@ -80,26 +81,23 @@ export class GGStreamView extends GGView {
                         <div class="quality-block">
                             <div class="icon">
                                 <img src="/images/ggplayer/quality.svg" alt="">
-                                <span class="quality">М</span>
+                                <span class="quality">М(A)</span>
                             </div>
                             <div class="popup-block">Качество видео. Нажмите, чтобы сменить</div>
                             <ul class="quality-list">
-                                <li><a href="" data-letter="A" style="display: block;" rel="auto">Авто</a></li>
-                                <li><a href="" data-letter="И" rel="premium" class="">Исходное</a></li>
-                                <li><a href="" data-letter="В" rel="720">Высокое</a></li>
-                                <li><a href="" data-letter="С" rel="480">Среднее</a></li>
-                                <li><a href="" data-letter="М" rel="240">Мобильное</a></li>
-                                <li><a href="" data-letter="З" rel="audio">Только звук</a></li>
+                                <li><a data-letter="A" style="display: block;" rel="auto">Авто</a></li>
+                                <li><a data-letter="И" rel="premium" class="">Исходное</a></li>
+                                <li><a data-letter="В" rel="720">Высокое</a></li>
+                                <li><a data-letter="С" rel="480">Среднее</a></li>
+                                <li><a data-letter="М" rel="240">Мобильное</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
-
     `;
-    private qualitySwitch : Element;
-
+    private qualitySwitch: Element;
+    private volumeValue: string;
 
     constructor(placeHolder: Element, player: GGPlayer) {
         super(placeHolder, player);
@@ -110,6 +108,9 @@ export class GGStreamView extends GGView {
 
     protected bind() {
         this.clipPlayer = this.placeHolder.querySelector("#tplggplayer");
+        this.clipPlayer.addEventListener('mouseover',()=>this.cursorMove());
+        this.clipPlayer.addEventListener('mousemove',()=>this.cursorMove());
+
         this.playButton = this.placeHolder.querySelector('#_smallPlayBtn');
         this.playButton.addEventListener('click', () => this.playToggle());
 
@@ -117,51 +118,68 @@ export class GGStreamView extends GGView {
         this.volumeBar = this.placeHolder.querySelector('.slider-wrap');
         this.volumeBar.addEventListener('click', (e) => this.moveAt(e));
 
-        let handle = this.volumeBar.querySelector('.ui-slider-handle');
-
         this.qualitySwitch = this.placeHolder.querySelector('#_qualitySwitch');
         this.qualitySwitch.addEventListener('click', () => this.qualitySwitch.classList.toggle('active'));
 
+        this.qualityLetter = this.qualitySwitch.querySelector('.quality');
 
-        handle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
+        
+
+        let qualityLevels = this.qualitySwitch.querySelector('.quality-list').children;
+
+        qualityLevels[0].addEventListener('click', () => this.player.setQualityLevel(-1));
+        for (let i = 0; i < qualityLevels.length - 1; i++) {
+            console.log(qualityLevels[i + 1].textContent);
+            qualityLevels[i+1].addEventListener('click', () => {
+                this.player.setQualityLevel(3 - i);
+                this.player.setAutoQuality(false);
+        });
+        }
+
+        let volumeHandle = this.volumeBar.querySelector('.ui-slider-handle');
+
+        this.fullscreenButton = this.placeHolder.querySelector('#_fullscreenBtn');
+        this.fullscreenButton.addEventListener('click',
+            () => this.player.setFullscreen(!this.player.isFullscreen()));
+
+        this.muteToggle = this.placeHolder.querySelector('#_muteBtn');
+        this.muteToggle.addEventListener('click', () => this.player.muteToggle());
+
+        (<HTMLElement>volumeHandle).ondrag = null;
+        volumeHandle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
         document.addEventListener('mouseup', () => {
             this.isDragging = false;
         });
 
+        this.subscribeToPlayerEvents();
+    }
 
-        this.muteToggle = this.placeHolder.querySelector('#_muteBtn');
-        this.muteToggle.addEventListener('click', () => this.player.muteToggle());
+
+    private subscribeToPlayerEvents() {
 
         this.player.on(PlayerEvents.PAUSE, () => {
             this.playButton.classList.remove('active')
         });
 
-        this.player.on(PlayerEvents.PLAY,() =>{
+        this.player.on(PlayerEvents.PLAY, () => {
             this.playButton.classList.add('active')
         });
 
-
         this.player.on(PlayerEvents.MUTE_TOGGLE, () => {
-            console.dir(this.muteToggle);
-            this.muteToggle.classList.toggle('active');
-            console.dir(this.muteToggle);
+            this.muteChange();
         });
 
         this.player.on(PlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
 
-        this.fullscreenButton = this.placeHolder.querySelector('#_fullscreenBtn');
-
-        this.fullscreenButton.addEventListener('click', () => !this.player.isFullscreen());
+        this.player.on(PlayerEvents.CHANGE_QUALITY, (level: number) => this.qualitySet(level))
     }
-
 
     private moveAt(e: any) {
         if (!this.isDragging && e.type !== 'click') return;
         let sliderRange = this.volumeBar.querySelector('.slider-range-value') as HTMLElement;
         let rect = this.volumeBar.querySelector('.slider-range').getBoundingClientRect();
 
-        let handle = <HTMLElement>this.volumeBar.querySelector('.ui-slider-handle');
-        console.dir(handle);
+        let handle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
 
         let handleLeft = (e.pageX - rect.left - handle.offsetWidth / 2);
         let sliderRight = (e.pageX - rect.left - handle.offsetWidth / 2);
@@ -180,7 +198,7 @@ export class GGStreamView extends GGView {
         this.player.setVolume(volumeValue);
         handle.style.left = handleLeft / rect.width * 100 + '%';
         sliderRange.style.width = sliderRight / rect.width * 100 + '%';
-
+        this.volumeValue = handle.style.left;
     };
 
     private moveSeekHandle(e) {
@@ -213,12 +231,55 @@ export class GGStreamView extends GGView {
                 }
             }
         }
-
         else {
             if (document.exitFullscreen)
                 document.exitFullscreen();
             else if (document.webkitExitFullscreen)
                 document.webkitExitFullscreen();
         }
+    }
+
+    private qualitySet(level: number) {
+        switch (level) {
+            case 0:
+                this.qualityLetter.textContent = 'М';
+                break;
+            case 1:
+                this.qualityLetter.textContent = 'C';
+                break;
+            case 2:
+                this.qualityLetter.textContent = 'В';
+                break;
+            case 3:
+                this.qualityLetter.textContent = 'И';
+                break
+
+        }
+        if (this.player.isAutoQuality() && this.qualityLetter.textContent.length <= 2) {
+            this.qualityLetter.textContent += '(А)';
+        }
+    }
+
+
+    private muteChange() {
+        this.muteToggle.classList.toggle('active');
+        let sliderRange = this.volumeBar.querySelector('.slider-range-value') as HTMLElement;
+        let handle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
+        if (this.player.isMuted()) {
+
+            this.volumeValue = handle.style.left;
+            handle.style.left = '0%';
+            sliderRange.style.width = '0%';
+        }
+        else {
+            handle.style.left = this.volumeValue;
+            sliderRange.style.width = this.volumeValue;
+        }
+    }
+
+    private cursorMove(){
+        this.clipPlayer.classList.add('hover');
+        clearTimeout(this.timer);
+        this.timer = setTimeout(()=>this.clipPlayer.classList.remove('hover'),10000);
     }
 }

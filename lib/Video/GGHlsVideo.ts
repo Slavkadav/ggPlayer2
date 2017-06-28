@@ -22,6 +22,7 @@ export class GGVideoHLS extends GGVideo {
                 console.log('Manifest loaded');
                 this.qualityLevels = data.levels;
                 console.dir(data.levels);
+                this.player.setQualityLevel(this.hls.currentLevel);
             });
 
             this.hls.on(Hls.Events.ERROR, (event, data) => {
@@ -34,8 +35,18 @@ export class GGVideoHLS extends GGVideo {
                 console.log('errorFatal: ' + errorFatal);
             });
 
-           this.player.on(PlayerEvents.CHANGE_QUALITY, (level)=>this.setQuality(level));
-
+           this.player.on(PlayerEvents.CHANGE_QUALITY, (level)=>{
+               console.log('quality changed by player');
+               this.setQuality(level);
+               console.dir(this.hls);
+            });
+        
+           this.hls.on(Hls.Events.LEVEL_SWITCHED, (event,data)=>{
+               this.player.setQualityLevel(data.level);
+               this.player.setAutoQuality(true);
+               console.log('quality auto changed');
+               console.dir(this.hls);
+            });
         }
         else {
             alert('Ваш браузер не поддерживает HLS');
@@ -51,7 +62,7 @@ export class GGVideoHLS extends GGVideo {
         this.videoElement.pause();
     }
 
-    mute(): void {
+    muteChange(): void {
         this.videoElement.muted = this.player.isMuted();
     }
 
@@ -65,6 +76,7 @@ export class GGVideoHLS extends GGVideo {
 
 
     private setQuality(level: any) {
+        console.log('try to set level ' + level);
         console.log('current level: ' + this.hls.currentLevel);
         if(level < this.qualityLevels.length && level >=0){
             this.hls.currentLevel = level;
