@@ -3,7 +3,7 @@ import { GGPlayer } from "../GGPlayer";
 import { PlayerEvents } from "../PlayerEvents";
 
 export class GGStreamView extends GGView {
-  
+
 
     private playButton: Element;
     private volumeBar: Element;
@@ -108,8 +108,8 @@ export class GGStreamView extends GGView {
 
     protected bind() {
         this.clipPlayer = this.placeHolder.querySelector("#tplggplayer");
-        this.clipPlayer.addEventListener('mouseover',()=>this.cursorMove());
-        this.clipPlayer.addEventListener('mousemove',()=>this.cursorMove());
+        this.clipPlayer.addEventListener('mouseover', () => this.cursorMove());
+        this.clipPlayer.addEventListener('mousemove', () => this.cursorMove());
 
         this.playButton = this.placeHolder.querySelector('#_smallPlayBtn');
         this.playButton.addEventListener('click', () => this.playToggle());
@@ -123,20 +123,19 @@ export class GGStreamView extends GGView {
 
         this.qualityLetter = this.qualitySwitch.querySelector('.quality');
 
-        
 
         let qualityLevels = this.qualitySwitch.querySelector('.quality-list').children;
-
-        qualityLevels[0].addEventListener('click', () => this.player.setQualityLevel(-1));
-        for (let i = 0; i < qualityLevels.length - 1; i++) {
-            console.log(qualityLevels[i + 1].textContent);
-            qualityLevels[i+1].addEventListener('click', () => {
-                this.player.setQualityLevel(3 - i);
-                this.player.setAutoQuality(false);
+        qualityLevels[0].addEventListener('click', () => {
+            this.player.setQualityLevel(-1);
+            this.player.setAutoQuality(true);
         });
+        for (let i = 1; i < qualityLevels.length; i++) {
+            console.log(qualityLevels[i].textContent);
+            qualityLevels[i].addEventListener('click', () => {
+                this.player.setQualityLevel(qualityLevels.length-i-1);
+                this.player.setAutoQuality(false);
+            });
         }
-
-        let volumeHandle = this.volumeBar.querySelector('.ui-slider-handle');
 
         this.fullscreenButton = this.placeHolder.querySelector('#_fullscreenBtn');
         this.fullscreenButton.addEventListener('click',
@@ -145,7 +144,10 @@ export class GGStreamView extends GGView {
         this.muteToggle = this.placeHolder.querySelector('#_muteBtn');
         this.muteToggle.addEventListener('click', () => this.player.muteToggle());
 
-        (<HTMLElement>volumeHandle).ondrag = null;
+
+        let volumeHandle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
+        volumeHandle.ondragstart = null;
+        volumeHandle.ondrag = null;
         volumeHandle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
         document.addEventListener('mouseup', () => {
             this.isDragging = false;
@@ -245,7 +247,7 @@ export class GGStreamView extends GGView {
                 this.qualityLetter.textContent = 'М';
                 break;
             case 1:
-                this.qualityLetter.textContent = 'C';
+                this.qualityLetter.textContent = 'С';
                 break;
             case 2:
                 this.qualityLetter.textContent = 'В';
@@ -277,9 +279,9 @@ export class GGStreamView extends GGView {
         }
     }
 
-    private cursorMove(){
+    private cursorMove() {
         this.clipPlayer.classList.add('hover');
         clearTimeout(this.timer);
-        this.timer = setTimeout(()=>this.clipPlayer.classList.remove('hover'),10000);
+        this.timer = setTimeout(() => {this.clipPlayer.classList.remove('hover'); this.qualitySwitch.classList.remove('active')}, 10000);
     }
 }

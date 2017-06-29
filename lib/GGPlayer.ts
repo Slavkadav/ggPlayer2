@@ -92,7 +92,7 @@ export class GGPlayer extends EventEmitter {
     }
 
     setQualityLevel(level: number) {
-        console.log('Выбран уровень качества ' + level);
+        console.log('Player set quality level ' + level);
         this.currentQualityLevel = level;
         this.emit(PlayerEvents.CHANGE_QUALITY, level);
     }

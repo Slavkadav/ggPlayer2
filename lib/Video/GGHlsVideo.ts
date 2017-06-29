@@ -1,7 +1,7 @@
 import Hls = require("hls.js");
-import {PlayerEvents} from "../PlayerEvents";
-import {GGVideo} from "./GGVideo";
-import {GGPlayer} from "../GGPlayer";
+import { PlayerEvents } from "../PlayerEvents";
+import { GGVideo } from "./GGVideo";
+import { GGPlayer } from "../GGPlayer";
 
 export class GGVideoHLS extends GGVideo {
 
@@ -25,27 +25,33 @@ export class GGVideoHLS extends GGVideo {
                 this.player.setQualityLevel(this.hls.currentLevel);
             });
 
-            this.hls.on(Hls.Events.ERROR, (event, data) => {
-                let errorType = data.type;
-                let errorDetails = data.details;
-                let errorFatal = data.fatal;
-
-                console.log('Type: ' + errorType);
-                console.log('Details: ' + errorDetails);
-                console.log('errorFatal: ' + errorFatal);
+            this.hls.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            // try to recover network error
+                            console.log("fatal network error encountered, try to recover");
+                            this.hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            console.log("fatal media error encountered, try to recover");
+                            this.hls.recoverMediaError();
+                            break;
+                        default:
+                            // cannot recover
+                            this.hls.destroy();
+                            break;
+                    }
+                }
             });
 
-           this.player.on(PlayerEvents.CHANGE_QUALITY, (level)=>{
-               console.log('quality changed by player');
-               this.setQuality(level);
-               console.dir(this.hls);
+            this.player.on(PlayerEvents.CHANGE_QUALITY, (level) => {
+                console.log('quality changed by player');
+                this.setQuality(level);
             });
-        
-           this.hls.on(Hls.Events.LEVEL_SWITCHED, (event,data)=>{
-               this.player.setQualityLevel(data.level);
-               this.player.setAutoQuality(true);
-               console.log('quality auto changed');
-               console.dir(this.hls);
+
+            this.hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
+                this.player.setQualityLevel(data.level);
             });
         }
         else {
@@ -78,10 +84,14 @@ export class GGVideoHLS extends GGVideo {
     private setQuality(level: any) {
         console.log('try to set level ' + level);
         console.log('current level: ' + this.hls.currentLevel);
-        if(level < this.qualityLevels.length && level >=0){
+        if (level < this.qualityLevels.length && level >= 0) {
+            console.log('set user quality ' + level);
             this.hls.currentLevel = level;
+            console.dir(this.qualityLevels[level]);
         }
         else {
+            console.log('set auto quality');
+            this.player.setAutoQuality(true);
             this.hls.currentLevel = -1;
         }
     }
