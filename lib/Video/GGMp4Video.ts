@@ -1,6 +1,5 @@
 import {GGVideo} from "./GGVideo";
 import {GGPlayer} from "../GGPlayer";
-import {PlayerEvents} from "../PlayerEvents";
 /**
  * Created by ggdev on 05.06.17.
  */

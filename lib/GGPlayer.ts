@@ -2,9 +2,9 @@ import {EventEmitter} from "events";
 import {PlayerEvents} from "./PlayerEvents";
 import {GGView} from "./Views/GGView";
 import {GGVideo} from "./Video/GGVideo";
-import {GGClipView} from "./Views/GGClipView";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
 import {GGStreamView} from "./Views/GGStreamView"
+import {StreamApi} from "./StreamApi";
 
 export class GGPlayer extends EventEmitter {
 
@@ -17,34 +17,50 @@ export class GGPlayer extends EventEmitter {
     private video: GGVideo;
     private parentElement: Element;
     private currentQualityLevel;
-    private console : HTMLElement;
-    private autoQuality : boolean;
+    private channelKey : string;
+    private autoQuality: boolean;
+    private streamInterface: StreamApi;
 
-    constructor(parent: Element) {
+    constructor(parent: Element, channelKey: string) {
         super();
         this.parentElement = parent;
         this.muted = false;
         this.playing = false;
         this.fullscreen = false;
         this.autoQuality = true;
+
+        this.channelKey = channelKey;
+        if (channelKey) {
+            this.streamInterface = new StreamApi(channelKey);
+        }
+
+    }
+
+    loadStreamInfo() {
+        if (this.streamInterface)
+            this.streamInterface.load();
     }
 
     setPlayerView(view: GGView): void {
-        this.view = view
+        this.view = view;
+        console.log('view was set');
     };
 
 
-    initVideo(videoUrl: string): void {
+    initVideo(): void {
+        let videoUrl = `https://hls.goodgame.ru/hls/${this.channelKey}.smil`;
         let view = new GGStreamView(this.parentElement, this);
-        view.loadT()
-        .then(() => {
-            this.setPlayerView(view);
-            this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('#_video'), this));
-        })
-        .catch(()=>console.log.bind(console));
+        this.streamInterface.load()
+            .then(()=>view.loadTemplate())
+            .then(()=>this.streamInterface.load())
+            .then(() => {
+                this.setPlayerView(view);
+                this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('#_video'), this));
+            })
+            .catch(() => console.log.bind(console));
     }
 
-    setVideo(video:GGVideo):void{
+    setVideo(video: GGVideo): void {
         this.video = video;
     }
 
@@ -97,15 +113,30 @@ export class GGPlayer extends EventEmitter {
         this.emit(PlayerEvents.CHANGE_QUALITY, level);
     }
 
-    isFullscreen() : boolean{
+    isFullscreen(): boolean {
         return this.fullscreen;
     }
 
-    isAutoQuality():boolean{
+    isAutoQuality(): boolean {
         return this.autoQuality;
     }
 
-    setAutoQuality(value:boolean){
+    setAutoQuality(value: boolean) {
         this.autoQuality = value;
     }
+
+    isAdult():boolean{
+        console.log('stream interface');
+        console.dir(this.streamInterface);
+        if(this.streamInterface)
+            return this.streamInterface.isAdult();
+        return false;
+    }
+
+    hasAnouncment():boolean{
+        if(this.streamInterface)
+            return this.streamInterface.hasAnnouncement();
+        return false;
+    }
+
 }

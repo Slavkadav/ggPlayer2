@@ -21,9 +21,10 @@ export abstract class GGView {
             .catch(() => console.log.bind(console));
     }
 
-    public loadT(): Promise<string> {
+    public loadTemplate(): Promise<string> {
         return (this.template ? Promise.resolve(this.template) : this.loadTemplateUrl())
             .then(res => {
+                console.log(res);
                 this.placeHolder.innerHTML = res;
                 console.log('placeholder html was set');
             })
