@@ -139,4 +139,8 @@ export class GGPlayer extends EventEmitter {
         return false;
     }
 
+    getStreamStartDate(){
+        return this.streamInterface.getStreamStartTime();
+    }
+
 }

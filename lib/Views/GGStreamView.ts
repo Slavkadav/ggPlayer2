@@ -13,7 +13,7 @@ export class GGStreamView extends GGView {
     private fullscreenButton: Element;
     private qualityLetter: Element;
     private timer;
-    private playerBlock : Element;
+    private playerBlock: Element;
     protected template: string = `
 <div id="html5player" style="display: block" class="">
     <div id="tplggplayer" class="player-block" style="background-color: #000000;" tabindex="1">
@@ -25,7 +25,7 @@ export class GGStreamView extends GGView {
             <div class="inner-block">
                 <img src="https://goodgame.ru/images/svg/18.svg">
                 <div class="text">Здесь ругаются взрослые дяди</div>
-                <a id="_warningBtn" class="btn btn-blue">Начать просмотр</a>
+                <a id="_warningBtn" class="btn btn-blue">Cделать хорошо</a>
             </div>
         </div>
         
@@ -196,10 +196,9 @@ export class GGStreamView extends GGView {
                 () => this.playerBlock.classList.remove('adult-warning'));
         }
 
-        if(this.player.hasAnouncment()){
-            this.setAnouncement();
+        if (this.player.hasAnouncment()) {
+            this.setAnnouncement();
         }
-
 
         console.log('all bind');
         this.subscribeToPlayerEvents();
@@ -338,7 +337,28 @@ export class GGStreamView extends GGView {
     }
 
 
-    private setAnouncement(){
+    private setAnnouncement() {
+        let startTime = this.player.getStreamStartDate();
+        if (Date.now() > startTime.getTime()) return;
+
         let anounceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
+        anounceBlock.style.display = 'block';
+
+        this.countTime(startTime).then(() => this.player.play());
+    }
+
+    private async countTime(startTime: Date) {
+        let announceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
+        let timeRemains;
+        let hours = announceBlock.querySelector('.hours');
+        let minutes = announceBlock.querySelector('.minutes');
+        let seconds = announceBlock.querySelector('.seconds');
+        while (Date.now() < startTime.getTime()) {
+            timeRemains = new Date(startTime.getTime() - Date.now());
+            hours.textContent = timeRemains.getHours();
+            minutes.textContent = timeRemains.getMinutes();
+            seconds.textContent = timeRemains.getUTCSeconds();
+            startTime = timeRemains;
+        }
     }
 }
