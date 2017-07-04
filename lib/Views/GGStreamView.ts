@@ -197,7 +197,9 @@ export class GGStreamView extends GGView {
         }
 
         if (this.player.hasAnouncment()) {
-            this.setAnnouncement();
+
+            console.log('player has announce')
+            //this.setAnnouncement();
         }
 
         console.log('all bind');
@@ -344,7 +346,7 @@ export class GGStreamView extends GGView {
         let anounceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
         anounceBlock.style.display = 'block';
 
-        this.countTime(startTime).then(() => this.player.play());
+        this.countTime(startTime).then(()=>console.log('time is done'));
     }
 
     private async countTime(startTime: Date) {

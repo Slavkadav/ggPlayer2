@@ -25,6 +25,8 @@ export class StreamApi {
         return this.stream.broadcast.broadcast_logo;
     }
 
+    isOnline(){
+    }
 
     isAdult(): boolean {
         console.log(this.stream.adult as boolean);
