@@ -1,10 +1,10 @@
-import { GGView } from "./GGView";
-import { GGPlayer } from "../GGPlayer";
-import { PlayerEvents } from "../PlayerEvents";
+import {GGView} from "./GGView";
+import {GGPlayer} from "../GGPlayer";
+import {PlayerEvents} from "../PlayerEvents";
+import {clearInterval} from "timers";
 
 export class GGStreamView extends GGView {
-
-
+    private announceBlock: HTMLElement;
     private playButton: Element;
     private volumeBar: Element;
     private muteToggle: Element;
@@ -13,101 +13,124 @@ export class GGStreamView extends GGView {
     private fullscreenButton: Element;
     private qualityLetter: Element;
     private timer;
-    protected template = `     
-        <div id="tplggplayer" class="player-block" style="background-color: #000000;" tabindex="1">
-                <div id="_poster" class="off" style="background-image: url(&quot;https://hls.goodgame.ru/previews/32399.jpg&quot;);"></div>
-                <div id="_video" class="on">
-                    
-                </div>
+    private playerBlock: Element;
+    protected template: string = `
+<div id="html5player" style="display: block" class="">
+    <div id="tplggplayer" class="player-block" style="background-color: #000000;" tabindex="1">
+        <div id="_poster" class="off"></div>
+        <div id="_video" class="on">
 
-                <div id="_bigPlayBtn" class="play-block" style="display: none;">
-                    <img src="/images/ggplayer/big-play.svg" alt="">
-                </div>
-                <div class="control-block">
-                    <div id="_smallPlayBtn" class="player-control play-wrap">
-                        <div rel="play" class="on">
-                            <div class="play-btn">
-                                <img src="/images/ggplayer/play.svg" width="14" height="29" alt="">
-                                <div class="popup-block">Старт</div>
-                            </div>
-                        </div>
-                        <div rel="stop" class="off">
-                            <div class="play-btn">
-                                <img src="/images/ggplayer/pause.svg" alt="">
-                                <div class="popup-block">Пауза</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="_muteBtn" class="player-control sound-wrap">
-                        <div class="on">
-                            <div class="play-btn">
-                                <img src="/images/ggplayer/mute.svg" alt="">
-                                <div class="popup-block">Включить звук</div>
-                            </div>
-                        </div>
-                        <div class="off">
-                            <div class="play-btn">
-                                <img src="/images/ggplayer/unmute.svg" alt="">
-                                <div class="popup-block">Без звука</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="slider-wrap">
-                        <div class="popup-block">Регулировать громкость</div>
-                        <div class="clickable">
-                            <div class="slider-range ui-slider">
-                                <div class="slider-range-value" style="width: 100%;"></div>
-                                <div class="slider-value ui-slider-handle" style="left: 100%;">
-                                    <img src="/images/ggplayer/grip.svg" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="_fullscreenBtn" class="player-control screen-wrap">
-                        <div class="on">
-                            <div class="play-btn">
-                                <img src="/images/ggplayer/fullscreen.svg" alt="">
-                                <div class="popup-block">Во весь экран</div>
-                            </div>
-                        </div>
-                        <div class="off">
-                            <div class="play-btn">
-                                <img src="/images/ggplayer/normal-mode.svg" alt="">
-                                <div class="popup-block">Обычный режим</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="_qualitySwitch" class="player-control quality-wrap" style="display: block;">
-                        <div class="quality-block">
-                            <div class="icon">
-                                <img src="/images/ggplayer/quality.svg" alt="">
-                                <span class="quality">М(A)</span>
-                            </div>
-                            <div class="popup-block">Качество видео. Нажмите, чтобы сменить</div>
-                            <ul class="quality-list">
-                                <li><a data-letter="A" style="display: block;" rel="auto">Авто</a></li>
-                                <li><a data-letter="И" rel="premium" class="">Исходное</a></li>
-                                <li><a data-letter="В" rel="720">Высокое</a></li>
-                                <li><a data-letter="С" rel="480">Среднее</a></li>
-                                <li><a data-letter="М" rel="240">Мобильное</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
         </div>
+        <div class="warning">
+            <div class="inner-block">
+                <img src="https://goodgame.ru/images/svg/18.svg">
+                <div class="text">Здесь ругаются взрослые дяди</div>
+                <a id="_warningBtn" class="btn btn-blue">Cделать хорошо</a>
+            </div>
+        </div>
+        
+        <div class="announce-block" style="display: none;">
+                <div class="inner-block">
+                    <div class="title">Все будет круто</div>
+                    <div class="img-block" style="background: url('//goodgame.ru/images/channel-logo.jpg') no-repeat; background-size: cover;"></div>
+                    <div class="timer-block" style="visibility: visible">
+                        <span class="hours"></span>
+                        <span class="dots">:</span>
+                        <span class="minutes"></span>
+                        <span class="dots">:</span>
+                        <span class="seconds"></span>
+                    </div>
+                </div>
+            <div class="blured" style="background: url('//goodgame.ru/images/channel-logo.jpg') no-repeat; background-size: cover;"></div>
+        </div>
+        
+        <div class="control-block">
+            <div id="_smallPlayBtn" class="player-control play-wrap">
+                <div rel="play" class="on">
+                    <div class="play-btn">
+                        <img src="https://goodgame.ru/images/ggplayer/play.svg" width="14" height="29" alt="">
+                        <div class="popup-block">Старт</div>
+                    </div>
+                </div>
+                <div rel="stop" class="off">
+                    <div class="play-btn">
+                        <img src="https://goodgame.ru/images/ggplayer/pause.svg" alt="">
+                        <div class="popup-block">Пауза</div>
+                    </div>
+                </div>
+            </div>
+            <div id="_muteBtn" class="player-control sound-wrap">
+                <div class="on">
+                    <div class="play-btn">
+                        <img src="https://goodgame.ru/images/ggplayer/mute.svg" alt="">
+                        <div class="popup-block">Включить звук</div>
+                    </div>
+                </div>
+                <div class="off">
+                    <div class="play-btn">
+                        <img src="https://goodgame.ru/images/ggplayer/unmute.svg" alt="">
+                        <div class="popup-block">Без звука</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-wrap">
+                <div class="popup-block">Регулировать громкость</div>
+                <div class="clickable">
+                    <div class="slider-range ui-slider">
+                        <div class="slider-range-value" style="width: 100%;"></div>
+                        <div class="slider-value ui-slider-handle" style="left: 100%;">
+                            <img src="https://goodgame.ru/images/ggplayer/grip.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="_fullscreenBtn" class="player-control screen-wrap">
+                <div class="on">
+                    <div class="play-btn">
+                        <img src="https://goodgame.ru/images/ggplayer/fullscreen.svg" alt="">
+                        <div class="popup-block">Во весь экран</div>
+                    </div>
+                </div>
+                <div class="off">
+                    <div class="play-btn">
+                        <img src="https://goodgame.ru/images/ggplayer/normal-mode.svg" alt="">
+                        <div class="popup-block">Обычный режим</div>
+                    </div>
+                </div>
+            </div>
+            <div id="_qualitySwitch" class="player-control quality-wrap" style="display: block;">
+                <div class="quality-block">
+                    <div class="icon">
+                        <img src="https://goodgame.ru/images/ggplayer/quality.svg" alt="">
+                        <span class="quality">М(A)</span>
+                    </div>
+                    <div class="popup-block">Качество видео. Нажмите, чтобы сменить</div>
+                    <ul class="quality-list">
+                        <li><a data-letter="A" style="display: block;" rel="auto">Авто</a></li>
+                        <li><a data-letter="И" rel="premium" class="">Исходное</a></li>
+                        <li><a data-letter="В" rel="720">Высокое</a></li>
+                        <li><a data-letter="С" rel="480">Среднее</a></li>
+                        <li><a data-letter="М" rel="240">Мобильное</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     `;
     private qualitySwitch: Element;
     private volumeValue: string;
 
     constructor(placeHolder: Element, player: GGPlayer) {
         super(placeHolder, player);
-        console.dir(player);
-        console.dir(placeHolder);
     }
 
 
     protected bind() {
-        this.clipPlayer = this.placeHolder.querySelector("#tplggplayer");
+        this.playerBlock = this.placeHolder.querySelector("#html5player");
+
+        this.clipPlayer = this.placeHolder.querySelector('#tplggplayer');
+
         this.clipPlayer.addEventListener('mouseover', () => this.cursorMove());
         this.clipPlayer.addEventListener('mousemove', () => this.cursorMove());
 
@@ -116,10 +139,11 @@ export class GGStreamView extends GGView {
 
 
         this.volumeBar = this.placeHolder.querySelector('.slider-wrap');
-        this.volumeBar.addEventListener('click', (e) => this.moveAt(e));
+        this.volumeBar.addEventListener('click', (e) => this.changeVolume(e));
 
         this.qualitySwitch = this.placeHolder.querySelector('#_qualitySwitch');
         this.qualitySwitch.addEventListener('click', () => this.qualitySwitch.classList.toggle('active'));
+
 
         this.qualityLetter = this.qualitySwitch.querySelector('.quality');
 
@@ -129,10 +153,10 @@ export class GGStreamView extends GGView {
             this.player.setQualityLevel(-1);
             this.player.setAutoQuality(true);
         });
+
         for (let i = 1; i < qualityLevels.length; i++) {
-            console.log(qualityLevels[i].textContent);
             qualityLevels[i].addEventListener('click', () => {
-                this.player.setQualityLevel(qualityLevels.length-i-1);
+                this.player.setQualityLevel(qualityLevels.length - i - 1);
                 this.player.setAutoQuality(false);
             });
         }
@@ -141,17 +165,33 @@ export class GGStreamView extends GGView {
         this.fullscreenButton.addEventListener('click',
             () => this.player.setFullscreen(!this.player.isFullscreen()));
 
+
         this.muteToggle = this.placeHolder.querySelector('#_muteBtn');
         this.muteToggle.addEventListener('click', () => this.player.muteToggle());
-
 
         let volumeHandle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
         volumeHandle.ondragstart = null;
         volumeHandle.ondrag = null;
         volumeHandle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
-        document.addEventListener('mouseup', () => {
-            this.isDragging = false;
-        });
+        document.addEventListener('mouseup', () => this.isDragging = false);
+
+        if (this.player.isAdult()) {
+            this.playerBlock.classList.add('adult-warning');
+            this.playerBlock.querySelector('#_warningBtn').addEventListener('click',
+                () => this.playerBlock.classList.remove('adult-warning'));
+        }
+
+        console.log('check to announce');
+        console.log(this.player.hasAnouncment());
+        console.log(this.player.isStreamOnline());
+
+
+        if (this.player.hasAnouncment() && !this.player.isStreamOnline()) {
+            console.log('show announce');
+            this.announceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
+
+            this.showAnnouncement();                                    //TODO: сделай, наконец, анонсилку
+        }
 
         this.subscribeToPlayerEvents();
     }
@@ -176,7 +216,7 @@ export class GGStreamView extends GGView {
         this.player.on(PlayerEvents.CHANGE_QUALITY, (level: number) => this.qualitySet(level))
     }
 
-    private moveAt(e: any) {
+    private changeVolume(e: any) {
         if (!this.isDragging && e.type !== 'click') return;
         let sliderRange = this.volumeBar.querySelector('.slider-range-value') as HTMLElement;
         let rect = this.volumeBar.querySelector('.slider-range').getBoundingClientRect();
@@ -188,6 +228,7 @@ export class GGStreamView extends GGView {
         if (handleLeft < 0) {
             handleLeft = 0;
             sliderRight = 0;
+            this.muteToggle.classList.add('active')
         }
         if (sliderRight >= rect.width - handle.offsetWidth) {
             sliderRight = rect.width;
@@ -195,7 +236,7 @@ export class GGStreamView extends GGView {
         if (handleLeft >= rect.width - handle.offsetWidth) {
             handleLeft = rect.width;
         }
-
+        this.muteToggle.classList.remove('active');
         let volumeValue = handleLeft / rect.width;
         this.player.setVolume(volumeValue);
         handle.style.left = handleLeft / rect.width * 100 + '%';
@@ -206,7 +247,7 @@ export class GGStreamView extends GGView {
     private moveSeekHandle(e) {
         this.isDragging = true;
         document.addEventListener('mousemove',
-            (e: any) => this.moveAt(e));
+            (e: any) => this.changeVolume(e));
     }
 
     private playToggle() {
@@ -268,7 +309,6 @@ export class GGStreamView extends GGView {
         let sliderRange = this.volumeBar.querySelector('.slider-range-value') as HTMLElement;
         let handle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
         if (this.player.isMuted()) {
-
             this.volumeValue = handle.style.left;
             handle.style.left = '0%';
             sliderRange.style.width = '0%';
@@ -282,6 +322,43 @@ export class GGStreamView extends GGView {
     private cursorMove() {
         this.clipPlayer.classList.add('hover');
         clearTimeout(this.timer);
-        this.timer = setTimeout(() => {this.clipPlayer.classList.remove('hover'); this.qualitySwitch.classList.remove('active')}, 10000);
+        this.timer = setTimeout(() => {
+            this.clipPlayer.classList.remove('hover');
+            this.qualitySwitch.classList.remove('active')
+        }, 10000);
+    }
+
+
+    private showAnnouncement() {
+        let startTime = this.player.getStreamStartDate();
+        if (Date.now() > startTime.getTime()) return;
+
+        let anounceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
+        anounceBlock.style.display = 'block';
+
+        let imgBlock = anounceBlock.querySelector('.img-block') as HTMLElement;
+        let blured = anounceBlock.querySelector('.blured') as HTMLElement;
+
+        imgBlock.setAttribute('style', `background: url('//goodgame.ru/${this.player.streamPoster()}') no-repeat; background-size: cover;`);
+        blured.setAttribute('style', `background: url('//goodgame.ru/${this.player.streamPoster()}') no-repeat; background-size: cover;`);
+
+
+        this.countTime(startTime);
+    }
+
+    private countTime(startTime: Date) {
+        let timeRemains;
+        let hours = this.announceBlock.querySelector('.hours');
+        let minutes = this.announceBlock.querySelector('.minutes');
+        let seconds = this.announceBlock.querySelector('.seconds');
+
+
+        let x = setInterval(() => {
+            if(Date.now()>=startTime.getTime()) clearInterval(x);
+            timeRemains = new Date(startTime.getTime() - Date.now());
+            hours.textContent = timeRemains.getUTCHours();
+            minutes.textContent = timeRemains.getUTCMinutes();
+            seconds.textContent = timeRemains.getUTCSeconds();
+        }, 1000);
     }
 }

@@ -13,19 +13,16 @@ export class StreamApi {
                 console.log(result);
                 this.stream = JSON.parse(result)
             })
-            .then(() => {
-                console.dir(this.stream);
-                console.log('times', Date.now());
-                console.log(this.getStreamStartTime().getHours());
-            });
+            .catch(()=>console.log.bind(console));
     }
 
 
-    getPoster() {
+    getPoster() : string {
         return this.stream.broadcast.broadcast_logo;
     }
 
     isOnline(){
+        return this.stream.status == 'online';
     }
 
     isAdult(): boolean {

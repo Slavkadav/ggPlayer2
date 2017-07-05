@@ -1,10 +1,10 @@
-
+import {EventEmitter} from "events";
 import {PlayerEvents} from "./PlayerEvents";
 import {GGView} from "./Views/GGView";
 import {GGVideo} from "./Video/GGVideo";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
 import {GGStreamView} from "./Views/GGStreamView"
-import {EventEmitter} from "events";
+import {StreamApi} from "./StreamApi";
 
 export class GGPlayer extends EventEmitter {
 
@@ -17,34 +17,45 @@ export class GGPlayer extends EventEmitter {
     private video: GGVideo;
     private parentElement: Element;
     private currentQualityLevel;
-    private console : HTMLElement;
-    private autoQuality : boolean;
+    private channelKey: string;
+    private autoQuality: boolean;
+    private streamInterface: StreamApi;
+    public autoplay : boolean;
+    isReady :boolean;
 
-    constructor(parent: Element) {
+    constructor(parent: Element, channelKey: string) {
         super();
         this.parentElement = parent;
         this.muted = false;
         this.playing = false;
         this.fullscreen = false;
         this.autoQuality = true;
+        this.channelKey = channelKey;
+        if (channelKey) {
+            this.streamInterface = new StreamApi(channelKey);
+        }
+
     }
 
+
     setPlayerView(view: GGView): void {
-        this.view = view
+        this.view = view;
     };
 
 
-    initVideo(videoUrl: string): void {
+    init(): void {
+        let videoUrl = `https://hls.goodgame.ru/hls/${this.channelKey}.smil`;
         let view = new GGStreamView(this.parentElement, this);
-        view.loadT()
-        .then(() => {
-            this.setPlayerView(view);
-            this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('#_video'), this));
-        })
-        .catch(()=>console.log.bind(console));
+        this.streamInterface.load()
+            .then(() => view.loadTemplate())
+            .then(() => {
+                this.setPlayerView(view);
+                this.setVideo(new GGVideoFactory().createVideo(videoUrl, this.parentElement.querySelector('#_video'), this));
+            })
+            .catch(() => console.log.bind(console));
     }
 
-    setVideo(video:GGVideo):void{
+    setVideo(video: GGVideo): void {
         this.video = video;
     }
 
@@ -97,15 +108,44 @@ export class GGPlayer extends EventEmitter {
         this.emit(PlayerEvents.CHANGE_QUALITY, level);
     }
 
-    isFullscreen() : boolean{
+    isFullscreen(): boolean {
         return this.fullscreen;
     }
 
-    isAutoQuality():boolean{
+    isAutoQuality(): boolean {
         return this.autoQuality;
     }
 
-    setAutoQuality(value:boolean){
+    setAutoQuality(value: boolean) {
         this.autoQuality = value;
     }
+
+    isStreamOnline():boolean{
+        if(this.streamInterface)
+            return this.streamInterface.isOnline();
+        return false;
+    }
+
+    isAdult(): boolean {
+        console.log('stream interface');
+        console.dir(this.streamInterface);
+        if (this.streamInterface)
+            return this.streamInterface.isAdult();
+        return false;
+    }
+
+    hasAnouncment(): boolean {
+        if (this.streamInterface)
+            return this.streamInterface.hasAnnouncement();
+        return false;
+    }
+
+    getStreamStartDate() {
+        return this.streamInterface.getStreamStartTime();
+    }
+
+    streamPoster(){
+        return this.streamInterface.getPoster();
+    }
+
 }
