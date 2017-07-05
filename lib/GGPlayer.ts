@@ -1,10 +1,10 @@
 import {EventEmitter} from "events";
-import {PlayerEvents} from "./PlayerEvents";
+import {GGPlayerEvents} from "./GGPlayerEvents";
 import {GGView} from "./Views/GGView";
 import {GGVideo} from "./Video/GGVideo";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
 import {GGStreamView} from "./Views/GGStreamView"
-import {StreamApi} from "./StreamApi";
+import {GGStreamApi} from "./GGStreamApi";
 
 export class GGPlayer extends EventEmitter {
 
@@ -19,7 +19,7 @@ export class GGPlayer extends EventEmitter {
     private currentQualityLevel;
     private channelKey: string;
     private autoQuality: boolean;
-    private streamInterface: StreamApi;
+    private streamInterface: GGStreamApi;
     public autoplay : boolean;
     isReady :boolean;
 
@@ -32,7 +32,7 @@ export class GGPlayer extends EventEmitter {
         this.autoQuality = true;
         this.channelKey = channelKey;
         if (channelKey) {
-            this.streamInterface = new StreamApi(channelKey);
+            this.streamInterface = new GGStreamApi(channelKey);
         }
 
     }
@@ -62,32 +62,32 @@ export class GGPlayer extends EventEmitter {
     public play(): void {
 
         this.playing = true;
-        this.emit(PlayerEvents.PLAY);
+        this.emit(GGPlayerEvents.PLAY);
     }
 
     public pause(): void {
         this.playing = false;
-        this.emit(PlayerEvents.PAUSE);
+        this.emit(GGPlayerEvents.PAUSE);
     }
 
     public muteToggle(): void {
         this.muted = !this.muted;
-        this.emit(PlayerEvents.MUTE_TOGGLE);
+        this.emit(GGPlayerEvents.MUTE_TOGGLE);
     }
 
     seek(value: number): void {
-        this.emit(PlayerEvents.SEEK, value);
+        this.emit(GGPlayerEvents.SEEK, value);
         this.videoTime = value;
     }
 
     setVolume(value: number): void {
-        this.emit(PlayerEvents.CHANGE_VOLUME, value);
+        this.emit(GGPlayerEvents.CHANGE_VOLUME, value);
         this.volume = value;
     }
 
     setFullscreen(value: boolean): void {
         this.fullscreen = value;
-        this.emit(PlayerEvents.FULLSCREEN_CHANGE, value);
+        this.emit(GGPlayerEvents.FULLSCREEN_CHANGE, value);
     }
 
     isPlaying(): boolean {
@@ -105,7 +105,7 @@ export class GGPlayer extends EventEmitter {
     setQualityLevel(level: number) {
         console.log('Player set quality level ' + level);
         this.currentQualityLevel = level;
-        this.emit(PlayerEvents.CHANGE_QUALITY, level);
+        this.emit(GGPlayerEvents.CHANGE_QUALITY, level);
     }
 
     isFullscreen(): boolean {

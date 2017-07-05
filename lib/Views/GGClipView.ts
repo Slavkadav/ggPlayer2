@@ -1,6 +1,6 @@
 import { GGView } from "./GGView";
 import { GGPlayer } from "../GGPlayer";
-import { PlayerEvents } from "../PlayerEvents";
+import { GGPlayerEvents } from "../GGPlayerEvents";
 
 export class GGClipView extends GGView {
 
@@ -37,13 +37,13 @@ export class GGClipView extends GGView {
         this.muteToggle = this.placeHolder.querySelector('.mute-unmute') as Element;
         this.muteToggle.addEventListener('click', () => this.player.muteToggle());
 
-        this.player.on(PlayerEvents.PLAY, () => this.playButton.classList.add('active'));
+        this.player.on(GGPlayerEvents.PLAY, () => this.playButton.classList.add('active'));
 
-        this.player.on(PlayerEvents.PAUSE, () => this.playButton.classList.remove('active'));
+        this.player.on(GGPlayerEvents.PAUSE, () => this.playButton.classList.remove('active'));
 
-        this.player.on(PlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute'));
+        this.player.on(GGPlayerEvents.MUTE_TOGGLE, () => this.muteToggle.classList.toggle('mute'));
 
-        this.player.on(PlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
+        this.player.on(GGPlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
 
         this.fullscreenButton = this.placeHolder.querySelector('.full-exitfull') as Element;
 

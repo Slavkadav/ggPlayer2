@@ -1,6 +1,6 @@
 import {GGView} from "./GGView";
 import {GGPlayer} from "../GGPlayer";
-import {PlayerEvents} from "../PlayerEvents";
+import {GGPlayerEvents} from "../GGPlayerEvents";
 import {clearInterval} from "timers";
 
 export class GGStreamView extends GGView {
@@ -199,21 +199,21 @@ export class GGStreamView extends GGView {
 
     private subscribeToPlayerEvents() {
 
-        this.player.on(PlayerEvents.PAUSE, () => {
+        this.player.on(GGPlayerEvents.PAUSE, () => {
             this.playButton.classList.remove('active')
         });
 
-        this.player.on(PlayerEvents.PLAY, () => {
+        this.player.on(GGPlayerEvents.PLAY, () => {
             this.playButton.classList.add('active')
         });
 
-        this.player.on(PlayerEvents.MUTE_TOGGLE, () => {
+        this.player.on(GGPlayerEvents.MUTE_TOGGLE, () => {
             this.muteChange();
         });
 
-        this.player.on(PlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
+        this.player.on(GGPlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
 
-        this.player.on(PlayerEvents.CHANGE_QUALITY, (level: number) => this.qualitySet(level))
+        this.player.on(GGPlayerEvents.CHANGE_QUALITY, (level: number) => this.qualitySet(level))
     }
 
     private changeVolume(e: any) {

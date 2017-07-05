@@ -1,4 +1,4 @@
-export class StreamApi {
+export class GGStreamApi {
     streamKey: string;
     stream;
 

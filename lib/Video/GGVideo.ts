@@ -1,5 +1,5 @@
 import {GGPlayer} from "../GGPlayer";
-import {PlayerEvents} from "../PlayerEvents";
+import {GGPlayerEvents} from "../GGPlayerEvents";
 
 
 export abstract class GGVideo {
@@ -19,11 +19,11 @@ export abstract class GGVideo {
 
         this.parentElement.appendChild(this.videoElement);
 
-        this.player.on(PlayerEvents.PLAY, () => this.play());
-        this.player.on(PlayerEvents.PAUSE, () => this.pause());
-        this.player.on(PlayerEvents.SEEK, (value) => this.seek(value));
-        this.player.on(PlayerEvents.CHANGE_VOLUME, (value: number) => this.changeVolume(value));
-        this.player.on(PlayerEvents.MUTE_TOGGLE, ()=>this.muteChange());
+        this.player.on(GGPlayerEvents.PLAY, () => this.play());
+        this.player.on(GGPlayerEvents.PAUSE, () => this.pause());
+        this.player.on(GGPlayerEvents.SEEK, (value) => this.seek(value));
+        this.player.on(GGPlayerEvents.CHANGE_VOLUME, (value: number) => this.changeVolume(value));
+        this.player.on(GGPlayerEvents.MUTE_TOGGLE, ()=>this.muteChange());
     }
 
 

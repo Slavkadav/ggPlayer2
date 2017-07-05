@@ -1,5 +1,5 @@
 import Hls = require("hls.js");
-import {PlayerEvents} from "../PlayerEvents";
+import {GGPlayerEvents} from "../GGPlayerEvents";
 import {GGVideo} from "./GGVideo";
 import {GGPlayer} from "../GGPlayer";
 
@@ -24,7 +24,7 @@ export class GGVideoHLS extends GGVideo {
                 this.player.isReady = true;
             });
             this.hls.on(Hls.Events.ERROR, (event,data)=>this.errorHandling(event,data));
-            this.player.on(PlayerEvents.CHANGE_QUALITY, (level) => this.setQuality(level));
+            this.player.on(GGPlayerEvents.CHANGE_QUALITY, (level) => this.setQuality(level));
             this.hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => this.player.setQualityLevel(data.level));
         }
         else {
