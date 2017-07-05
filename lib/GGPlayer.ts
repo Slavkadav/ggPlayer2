@@ -1,10 +1,10 @@
-import {EventEmitter} from "events";
+
 import {PlayerEvents} from "./PlayerEvents";
 import {GGView} from "./Views/GGView";
 import {GGVideo} from "./Video/GGVideo";
-import {GGClipView} from "./Views/GGClipView";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
 import {GGStreamView} from "./Views/GGStreamView"
+import {EventEmitter} from "events";
 
 export class GGPlayer extends EventEmitter {
 
