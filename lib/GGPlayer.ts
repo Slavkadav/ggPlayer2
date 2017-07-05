@@ -121,9 +121,7 @@ export class GGPlayer extends EventEmitter {
     }
 
     isStreamOnline():boolean{
-        if(this.streamInterface)
             return this.streamInterface.isOnline();
-        return false;
     }
 
     isAdult(): boolean {
@@ -134,7 +132,7 @@ export class GGPlayer extends EventEmitter {
         return false;
     }
 
-    hasAnouncment(): boolean {
+    hasAnnouncement(): boolean {
         if (this.streamInterface)
             return this.streamInterface.hasAnnouncement();
         return false;

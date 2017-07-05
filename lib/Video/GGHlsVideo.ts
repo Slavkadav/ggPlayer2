@@ -34,6 +34,8 @@ export class GGVideoHLS extends GGVideo {
 
 
     private errorHandling(event, data){
+        console.dir(event);
+        console.dir(data);
         if (data.fatal) {
             switch (data.type) {
                 case Hls.ErrorTypes.NETWORK_ERROR:

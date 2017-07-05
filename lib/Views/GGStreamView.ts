@@ -182,11 +182,11 @@ export class GGStreamView extends GGView {
         }
 
         console.log('check to announce');
-        console.log(this.player.hasAnouncment());
+        console.log(this.player.hasAnnouncement());
         console.log(this.player.isStreamOnline());
 
 
-        if (this.player.hasAnouncment() && !this.player.isStreamOnline()) {
+        if (this.player.hasAnnouncement() && !this.player.isStreamOnline()) {
             console.log('show announce');
             this.announceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
 

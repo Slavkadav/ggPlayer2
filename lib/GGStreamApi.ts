@@ -22,7 +22,9 @@ export class GGStreamApi {
     }
 
     isOnline(){
-        return this.stream.status == 'online';
+        console.log('is stream online?');
+        console.log(this.stream.channel_status === 'online');
+        return this.stream.channel_status === 'online';
     }
 
     isAdult(): boolean {
@@ -31,7 +33,11 @@ export class GGStreamApi {
     }
 
     hasAnnouncement(): boolean {
-        return !!this.stream.broadcast;
+        if(this.stream.broadcast.broadcast_start){
+            console.log(this.stream.broadcast);
+            return true
+        }
+        return false;
     }
 
 
