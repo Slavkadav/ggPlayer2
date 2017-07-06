@@ -1,7 +1,7 @@
 import Hls = require("hls.js");
-import { PlayerEvents } from "../PlayerEvents";
-import { GGVideo } from "./GGVideo";
-import { GGPlayer } from "../GGPlayer";
+import {GGPlayerEvents} from "../GGPlayerEvents";
+import {GGVideo} from "./GGVideo";
+import {GGPlayer} from "../GGPlayer";
 
 export class GGVideoHLS extends GGVideo {
 
@@ -11,54 +11,49 @@ export class GGVideoHLS extends GGVideo {
     constructor(videoURL: string, parentElement: Element, player: GGPlayer) {
         super(parentElement, player);
         if (Hls.isSupported()) {
-            console.log('hls supported');
             this.hls = new Hls();
+            this.hls.debug = true;
             this.hls.attachMedia(this.videoElement);
-            this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                this.hls.loadSource(videoURL);
-                console.log('media attached');
-            });
+            this.hls.on(Hls.Events.MEDIA_ATTACHED, () => this.hls.loadSource(videoURL) );
             this.hls.on(Hls.Events.MANIFEST_LOADED, (event, data) => {
-                console.log('Manifest loaded');
                 this.qualityLevels = data.levels;
-                console.dir(data.levels);
                 this.player.setQualityLevel(this.hls.currentLevel);
-            });
-
-            this.hls.on(Hls.Events.ERROR, function (event, data) {
-                if (data.fatal) {
-                    switch (data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            // try to recover network error
-                            console.log("fatal network error encountered, try to recover");
-                            this.hls.startLoad();
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            console.log("fatal media error encountered, try to recover");
-                            this.hls.recoverMediaError();
-                            break;
-                        default:
-                            // cannot recover
-                            this.hls.destroy();
-                            break;
-                    }
+                if(this.player.autoplay){
+                    this.player.play();
                 }
+                this.player.isReady = true;
             });
-
-            this.player.on(PlayerEvents.CHANGE_QUALITY, (level) => {
-                console.log('quality changed by player');
-                this.setQuality(level);
-            });
-
-            this.hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
-                this.player.setQualityLevel(data.level);
-            });
+            this.hls.on(Hls.Events.ERROR, (event,data)=>this.errorHandling(event,data));
+            this.player.on(GGPlayerEvents.CHANGE_QUALITY, (level) => this.setQuality(level));
+            this.hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => this.player.setQualityLevel(data.level));
         }
         else {
             alert('Ваш браузер не поддерживает HLS');
         }
     }
 
+
+    private errorHandling(event, data){
+        console.dir(event);
+        console.dir(data);
+        if (data.fatal) {
+            switch (data.type) {
+                case Hls.ErrorTypes.NETWORK_ERROR:
+                    // try to recover network error
+                    console.log("fatal network error encountered, try to recover");
+                    this.hls.startLoad();
+                    break;
+                case Hls.ErrorTypes.MEDIA_ERROR:
+                    console.log("fatal media error encountered, try to recover");
+                    this.hls.recoverMediaError();
+                    break;
+                default:
+                    // cannot recover
+                    this.hls.destroy();
+                    break;
+            }
+        }
+    }
 
     play(): void {
         this.videoElement.play();

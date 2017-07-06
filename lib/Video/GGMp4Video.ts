@@ -1,9 +1,6 @@
 import {GGVideo} from "./GGVideo";
 import {GGPlayer} from "../GGPlayer";
-/**
- * Created by ggdev on 05.06.17.
- */
-
+import {GGPlayerEvents} from "../GGPlayerEvents";
 export class GGMp4Video extends GGVideo {
 
 

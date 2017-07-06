@@ -1,10 +1,10 @@
 import {GGView} from "./GGView";
 import {GGPlayer} from "../GGPlayer";
-import {PlayerEvents} from "../PlayerEvents";
+import {GGPlayerEvents} from "../GGPlayerEvents";
+import {clearInterval} from "timers";
 
 export class GGStreamView extends GGView {
-
-
+    private announceBlock: HTMLElement;
     private playButton: Element;
     private volumeBar: Element;
     private muteToggle: Element;
@@ -133,27 +133,20 @@ export class GGStreamView extends GGView {
 
         this.clipPlayer.addEventListener('mouseover', () => this.cursorMove());
         this.clipPlayer.addEventListener('mousemove', () => this.cursorMove());
-        console.log('clip player');
-        console.dir(this.clipPlayer);
 
         this.playButton = this.placeHolder.querySelector('#_smallPlayBtn');
         this.playButton.addEventListener('click', () => this.playToggle());
-        console.log('play button');
-        console.dir(this.playButton);
+
 
         this.volumeBar = this.placeHolder.querySelector('.slider-wrap');
-        this.volumeBar.addEventListener('click', (e) => this.moveAt(e));
-        console.log('volume bar');
-        console.dir(this.volumeBar);
+        this.volumeBar.addEventListener('click', (e) => this.changeVolume(e));
 
         this.qualitySwitch = this.placeHolder.querySelector('#_qualitySwitch');
         this.qualitySwitch.addEventListener('click', () => this.qualitySwitch.classList.toggle('active'));
-        console.log('quality switch');
-        console.dir(this.qualitySwitch);
+
 
         this.qualityLetter = this.qualitySwitch.querySelector('.quality');
-        console.log('quality letter');
-        console.dir(this.qualityLetter);
+
 
         let qualityLevels = this.qualitySwitch.querySelector('.quality-list').children;
         qualityLevels[0].addEventListener('click', () => {
@@ -161,10 +154,7 @@ export class GGStreamView extends GGView {
             this.player.setAutoQuality(true);
         });
 
-        console.log('quality levels loaded');
-
         for (let i = 1; i < qualityLevels.length; i++) {
-            console.log(qualityLevels[i].textContent);
             qualityLevels[i].addEventListener('click', () => {
                 this.player.setQualityLevel(qualityLevels.length - i - 1);
                 this.player.setAutoQuality(false);
@@ -174,59 +164,59 @@ export class GGStreamView extends GGView {
         this.fullscreenButton = this.placeHolder.querySelector('#_fullscreenBtn');
         this.fullscreenButton.addEventListener('click',
             () => this.player.setFullscreen(!this.player.isFullscreen()));
-        console.log('fullscreen button');
 
 
         this.muteToggle = this.placeHolder.querySelector('#_muteBtn');
         this.muteToggle.addEventListener('click', () => this.player.muteToggle());
-        console.log('mute toggle');
 
         let volumeHandle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
         volumeHandle.ondragstart = null;
         volumeHandle.ondrag = null;
         volumeHandle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
         document.addEventListener('mouseup', () => this.isDragging = false);
-        console.log('mouse move');
 
         if (this.player.isAdult()) {
-            console.log('player adult');
             this.playerBlock.classList.add('adult-warning');
-            console.log('add adult-warning to class list');
             this.playerBlock.querySelector('#_warningBtn').addEventListener('click',
                 () => this.playerBlock.classList.remove('adult-warning'));
         }
 
-        if (this.player.hasAnouncment()) {
+        console.log('check to announce');
+        console.log(this.player.hasAnnouncement());
+        console.log(this.player.isStreamOnline());
 
-            console.log('player has announce')
-            //this.setAnnouncement();
+
+        if (this.player.hasAnnouncement() && !this.player.isStreamOnline()) {
+            console.log('show announce');
+            this.announceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
+
+            this.showAnnouncement();                                    //TODO: сделай, наконец, анонсилку
         }
 
-        console.log('all bind');
         this.subscribeToPlayerEvents();
     }
 
 
     private subscribeToPlayerEvents() {
 
-        this.player.on(PlayerEvents.PAUSE, () => {
+        this.player.on(GGPlayerEvents.PAUSE, () => {
             this.playButton.classList.remove('active')
         });
 
-        this.player.on(PlayerEvents.PLAY, () => {
+        this.player.on(GGPlayerEvents.PLAY, () => {
             this.playButton.classList.add('active')
         });
 
-        this.player.on(PlayerEvents.MUTE_TOGGLE, () => {
+        this.player.on(GGPlayerEvents.MUTE_TOGGLE, () => {
             this.muteChange();
         });
 
-        this.player.on(PlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
+        this.player.on(GGPlayerEvents.FULLSCREEN_CHANGE, (value) => this.fullscreenToggle(value));
 
-        this.player.on(PlayerEvents.CHANGE_QUALITY, (level: number) => this.qualitySet(level))
+        this.player.on(GGPlayerEvents.CHANGE_QUALITY, (level: number) => this.qualitySet(level))
     }
 
-    private moveAt(e: any) {
+    private changeVolume(e: any) {
         if (!this.isDragging && e.type !== 'click') return;
         let sliderRange = this.volumeBar.querySelector('.slider-range-value') as HTMLElement;
         let rect = this.volumeBar.querySelector('.slider-range').getBoundingClientRect();
@@ -238,6 +228,7 @@ export class GGStreamView extends GGView {
         if (handleLeft < 0) {
             handleLeft = 0;
             sliderRight = 0;
+            this.muteToggle.classList.add('active')
         }
         if (sliderRight >= rect.width - handle.offsetWidth) {
             sliderRight = rect.width;
@@ -245,7 +236,7 @@ export class GGStreamView extends GGView {
         if (handleLeft >= rect.width - handle.offsetWidth) {
             handleLeft = rect.width;
         }
-
+        this.muteToggle.classList.remove('active');
         let volumeValue = handleLeft / rect.width;
         this.player.setVolume(volumeValue);
         handle.style.left = handleLeft / rect.width * 100 + '%';
@@ -256,7 +247,7 @@ export class GGStreamView extends GGView {
     private moveSeekHandle(e) {
         this.isDragging = true;
         document.addEventListener('mousemove',
-            (e: any) => this.moveAt(e));
+            (e: any) => this.changeVolume(e));
     }
 
     private playToggle() {
@@ -318,7 +309,6 @@ export class GGStreamView extends GGView {
         let sliderRange = this.volumeBar.querySelector('.slider-range-value') as HTMLElement;
         let handle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
         if (this.player.isMuted()) {
-
             this.volumeValue = handle.style.left;
             handle.style.left = '0%';
             sliderRange.style.width = '0%';
@@ -339,28 +329,36 @@ export class GGStreamView extends GGView {
     }
 
 
-    private setAnnouncement() {
+    private showAnnouncement() {
         let startTime = this.player.getStreamStartDate();
         if (Date.now() > startTime.getTime()) return;
 
         let anounceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
         anounceBlock.style.display = 'block';
 
-        this.countTime(startTime).then(()=>console.log('time is done'));
+        let imgBlock = anounceBlock.querySelector('.img-block') as HTMLElement;
+        let blured = anounceBlock.querySelector('.blured') as HTMLElement;
+
+        imgBlock.setAttribute('style', `background: url('//goodgame.ru/${this.player.streamPoster()}') no-repeat; background-size: cover;`);
+        blured.setAttribute('style', `background: url('//goodgame.ru/${this.player.streamPoster()}') no-repeat; background-size: cover;`);
+
+
+        this.countTime(startTime);
     }
 
-    private async countTime(startTime: Date) {
-        let announceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
+    private countTime(startTime: Date) {
         let timeRemains;
-        let hours = announceBlock.querySelector('.hours');
-        let minutes = announceBlock.querySelector('.minutes');
-        let seconds = announceBlock.querySelector('.seconds');
-        while (Date.now() < startTime.getTime()) {
+        let hours = this.announceBlock.querySelector('.hours');
+        let minutes = this.announceBlock.querySelector('.minutes');
+        let seconds = this.announceBlock.querySelector('.seconds');
+
+
+        let x = setInterval(() => {
+            if(Date.now()>=startTime.getTime()) clearInterval(x);
             timeRemains = new Date(startTime.getTime() - Date.now());
-            hours.textContent = timeRemains.getHours();
-            minutes.textContent = timeRemains.getMinutes();
+            hours.textContent = timeRemains.getUTCHours();
+            minutes.textContent = timeRemains.getUTCMinutes();
             seconds.textContent = timeRemains.getUTCSeconds();
-            startTime = timeRemains;
-        }
+        }, 1000);
     }
 }

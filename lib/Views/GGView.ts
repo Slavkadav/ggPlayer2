@@ -10,7 +10,6 @@ export abstract class GGView {
 
     constructor(placeHolder: Element, player: GGPlayer) {
         this.placeHolder = placeHolder;
-        console.debug('Placeholder:', placeHolder);
         this.player = player;
     }
 
@@ -26,7 +25,6 @@ export abstract class GGView {
             .then(res => {
                 console.log(res);
                 this.placeHolder.innerHTML = res;
-                console.log('placeholder html was set');
             })
             .then(res => this.bind())
             .catch(()=>console.log.bind(console));

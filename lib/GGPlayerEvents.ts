@@ -2,7 +2,7 @@
  * Created by ggdev on 05.06.17.
  */
 
-export class PlayerEvents {
+export class GGPlayerEvents {
     public static readonly PLAY = 'play';
     public static readonly PAUSE = 'pause';
     public static readonly MUTE_TOGGLE = 'muteToggle';
