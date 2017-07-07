@@ -1,6 +1,6 @@
-import { GGView } from "./GGView";
-import { GGPlayer } from "../GGPlayer";
-import { GGPlayerEvents } from "../GGPlayerEvents";
+import {GGView} from "./GGView";
+import {GGPlayer} from "../GGPlayer";
+import {GGPlayerEvents} from "../GGPlayerEvents";
 
 export class GGClipView extends GGView {
 
@@ -29,8 +29,8 @@ export class GGClipView extends GGView {
         let handle = <HTMLElement>this.volumeBar.querySelector('.handle');
         handle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
         document.addEventListener('mouseup', () => {
-            this.isDragging = false;
-        }
+                this.isDragging = false;
+            }
         );
 
 
@@ -103,10 +103,10 @@ export class GGClipView extends GGView {
             } else if (this.clipPlayer.webkitRequestFullScreen) {
                 this.clipPlayer.webkitRequestFullScreen();
             }
-            else{
-                if(document.exitFullscreen){
+            else {
+                if (document.exitFullscreen) {
                     document.exitFullscreen();
-                }else if(document.webkitExitFullscreen){
+                } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
                 }
             }

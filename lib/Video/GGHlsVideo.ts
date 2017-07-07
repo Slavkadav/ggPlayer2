@@ -14,18 +14,20 @@ export class GGVideoHLS extends GGVideo {
             this.hls = new Hls();
             this.hls.debug = true;
             this.hls.attachMedia(this.videoElement);
-            this.hls.on(Hls.Events.MEDIA_ATTACHED, () => this.hls.loadSource(videoURL) );
+            this.hls.on(Hls.Events.MEDIA_ATTACHED, () => this.hls.loadSource(videoURL));
             this.hls.on(Hls.Events.MANIFEST_LOADED, (event, data) => {
+                console.log('manifest loaded at ' + Date.now());
                 this.qualityLevels = data.levels;
                 this.player.setQualityLevel(this.hls.currentLevel);
-                if(this.player.autoplay){
+                if (this.player.autoplay) {
                     this.player.play();
                 }
-                this.player.isReady = true;
+                this.player.readyToStream();
             });
-            this.hls.on(Hls.Events.ERROR, (event,data)=>this.errorHandling(event,data));
+            this.hls.on(Hls.Events.ERROR, (event, data) => this.errorHandling(event, data));
             this.player.on(GGPlayerEvents.CHANGE_QUALITY, (level) => this.setQuality(level));
             this.hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => this.player.setQualityLevel(data.level));
+            this.hls.on(Hls.Events.MANIFEST_PARSED,()=>console.log('manifest parsed at ' + Date.now()));
         }
         else {
             alert('Ваш браузер не поддерживает HLS');
@@ -33,7 +35,7 @@ export class GGVideoHLS extends GGVideo {
     }
 
 
-    private errorHandling(event, data){
+    private errorHandling(event, data) {
         console.dir(event);
         console.dir(data);
         if (data.fatal) {

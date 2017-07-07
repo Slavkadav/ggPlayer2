@@ -23,7 +23,7 @@ export abstract class GGVideo {
         this.player.on(GGPlayerEvents.PAUSE, () => this.pause());
         this.player.on(GGPlayerEvents.SEEK, (value) => this.seek(value));
         this.player.on(GGPlayerEvents.CHANGE_VOLUME, (value: number) => this.changeVolume(value));
-        this.player.on(GGPlayerEvents.MUTE_TOGGLE, ()=>this.muteChange());
+        this.player.on(GGPlayerEvents.MUTE_TOGGLE, () => this.muteChange());
     }
 
 

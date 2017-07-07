@@ -126,7 +126,7 @@ export class GGStreamView extends GGView {
     }
 
 
-    protected bind() {
+    protected bind() {  //TODO: адекватное название метода
         this.playerBlock = this.placeHolder.querySelector("#html5player");
 
         this.clipPlayer = this.placeHolder.querySelector('#tplggplayer');
@@ -170,8 +170,8 @@ export class GGStreamView extends GGView {
         this.muteToggle.addEventListener('click', () => this.player.muteToggle());
 
         let volumeHandle = this.volumeBar.querySelector('.ui-slider-handle') as HTMLElement;
-        volumeHandle.ondragstart = null;
-        volumeHandle.ondrag = null;
+        volumeHandle.ondragstart = () => false;
+        volumeHandle.ondrag = () => false;
         volumeHandle.addEventListener('mousedown', (e) => this.moveSeekHandle(e));
         document.addEventListener('mouseup', () => this.isDragging = false);
 
@@ -186,15 +186,49 @@ export class GGStreamView extends GGView {
         console.log(this.player.isStreamOnline());
 
 
+        this.subscribeToPlayerEvents();
+
+
         if (this.player.hasAnnouncement() && !this.player.isStreamOnline()) {
             console.log('show announce');
             this.announceBlock = this.placeHolder.querySelector(".announce-block") as HTMLElement;
-
-            this.showAnnouncement();                                    //TODO: сделай, наконец, анонсилку
+            this.showAnnouncement();
         }
-
-        this.subscribeToPlayerEvents();
+        else if (!this.player.isStreamOnline()) {
+            console.log('show poster');
+            this.showPoster(true);
+        }
     }
+
+
+    private showPoster(value:boolean) {
+        let poster = this.playerBlock.querySelector('#_poster') as HTMLElement;
+        let video = this.playerBlock.querySelector('#_video') as HTMLElement;
+
+        if(value) {
+            poster.style.backgroundImage = 'url(' + this.player.channelPoster() + ')';
+            poster.classList.remove('off');
+            poster.classList.add('on');
+           // poster.style.height = '100%';
+
+            this.clipPlayer.classList.add('offline');
+
+            video.classList.remove('on');
+            video.classList.add('off');
+        }
+        else {
+            poster.classList.add('off');
+            poster.classList.remove('on');
+
+            this.clipPlayer.classList.remove('offline');
+
+            video.classList.add('on');
+            video.classList.remove('off');
+        }
+    }
+
+
+
 
 
     private subscribeToPlayerEvents() {
@@ -354,7 +388,7 @@ export class GGStreamView extends GGView {
 
 
         let x = setInterval(() => {
-            if(Date.now()>=startTime.getTime()) clearInterval(x);
+            if (Date.now() >= startTime.getTime()) clearInterval(x);
             timeRemains = new Date(startTime.getTime() - Date.now());
             hours.textContent = timeRemains.getUTCHours();
             minutes.textContent = timeRemains.getUTCMinutes();

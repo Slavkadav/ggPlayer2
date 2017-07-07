@@ -10,4 +10,5 @@ export class GGPlayerEvents {
     public static readonly CHANGE_VOLUME = 'changeVolume';
     public static readonly FULLSCREEN_CHANGE = 'fullscreenChange';
     public static readonly CHANGE_QUALITY = 'changeQuality';
+    public static readonly STREAM_BEGIN = 'streamBegin';
 }

@@ -1,4 +1,4 @@
-import { GGPlayer } from "../GGPlayer";
+import {GGPlayer} from "../GGPlayer";
 import 'whatwg-fetch';
 
 
@@ -27,7 +27,7 @@ export abstract class GGView {
                 this.placeHolder.innerHTML = res;
             })
             .then(res => this.bind())
-            .catch(()=>console.log.bind(console));
+            .catch(() => console.log.bind(console));
     }
 
     protected abstract bind();

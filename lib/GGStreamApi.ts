@@ -13,15 +13,19 @@ export class GGStreamApi {
                 console.log(result);
                 this.stream = JSON.parse(result)
             })
-            .catch(()=>console.log.bind(console));
+            .catch(() => console.log.bind(console));
     }
 
 
-    getPoster() : string {
+    getBroadcastPoster(): string {
         return this.stream.broadcast.broadcast_logo;
     }
 
-    isOnline(){
+    getChannelPoster(): string {
+        return this.stream.channel_poster;
+    }
+
+    isOnline() {
         console.log('is stream online?');
         console.log(this.stream.channel_status === 'online');
         return this.stream.channel_status === 'online';
@@ -33,7 +37,7 @@ export class GGStreamApi {
     }
 
     hasAnnouncement(): boolean {
-        if(this.stream.broadcast.broadcast_start){
+        if (this.stream.broadcast.broadcast_start) {
             console.log(this.stream.broadcast);
             return true
         }

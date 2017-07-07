@@ -5,6 +5,7 @@ import {GGVideo} from "./Video/GGVideo";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
 import {GGStreamView} from "./Views/GGStreamView"
 import {GGStreamApi} from "./GGStreamApi";
+import {PlayerEvents} from "../dist/lib/PlayerEvents";
 
 export class GGPlayer extends EventEmitter {
 
@@ -20,8 +21,8 @@ export class GGPlayer extends EventEmitter {
     private channelKey: string;
     private autoQuality: boolean;
     private streamInterface: GGStreamApi;
-    public autoplay : boolean;
-    isReady :boolean;
+    public autoplay: boolean;
+    isReady: boolean;
 
     constructor(parent: Element, channelKey: string) {
         super();
@@ -31,9 +32,8 @@ export class GGPlayer extends EventEmitter {
         this.fullscreen = false;
         this.autoQuality = true;
         this.channelKey = channelKey;
-        if (channelKey) {
-            this.streamInterface = new GGStreamApi(channelKey);
-        }
+        this.streamInterface = new GGStreamApi(channelKey);
+
 
     }
 
@@ -94,9 +94,6 @@ export class GGPlayer extends EventEmitter {
         return this.playing;
     }
 
-    isPaused(): boolean {
-        return !this.playing;
-    }
 
     isMuted(): boolean {
         return this.muted;
@@ -116,34 +113,41 @@ export class GGPlayer extends EventEmitter {
         return this.autoQuality;
     }
 
+    readyToStream(){
+        this.isReady = true;
+        this.emit(GGPlayerEvents.STREAM_BEGIN);
+    }
+
     setAutoQuality(value: boolean) {
         this.autoQuality = value;
     }
 
-    isStreamOnline():boolean{
-            return this.streamInterface.isOnline();
+    isStreamOnline(): boolean {
+        return this.streamInterface.isOnline();
     }
 
     isAdult(): boolean {
         console.log('stream interface');
         console.dir(this.streamInterface);
-        if (this.streamInterface)
-            return this.streamInterface.isAdult();
-        return false;
+        return this.streamInterface.isAdult();
     }
 
     hasAnnouncement(): boolean {
-        if (this.streamInterface)
-            return this.streamInterface.hasAnnouncement();
-        return false;
+        return this.streamInterface.hasAnnouncement();
     }
 
     getStreamStartDate() {
         return this.streamInterface.getStreamStartTime();
     }
 
-    streamPoster(){
-        return this.streamInterface.getPoster();
+    streamPoster() {
+        return this.streamInterface.getBroadcastPoster();
     }
+
+    channelPoster() {
+        return this.streamInterface.getChannelPoster();
+    }
+
+
 
 }

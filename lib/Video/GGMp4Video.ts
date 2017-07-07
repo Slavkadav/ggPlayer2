@@ -5,7 +5,7 @@ export class GGMp4Video extends GGVideo {
 
 
     constructor(videoURL: string, parentElement: Element, player: GGPlayer) {
-        super(parentElement,player);
+        super(parentElement, player);
         this.videoElement.src = videoURL;
 
         this.addPlayerListeners();
@@ -23,14 +23,15 @@ export class GGMp4Video extends GGVideo {
         this.videoElement.muted = this.player.isMuted();
     }
 
-    changeVolume(value:number): void {
+    changeVolume(value: number): void {
         this.videoElement.volume = value;
     }
+
     setFullscreen(): void {
         this.videoElement.requestFullscreen();
     }
 
-    seek(value:number){
+    seek(value: number) {
         this.videoElement.currentTime = value;
     }
 
