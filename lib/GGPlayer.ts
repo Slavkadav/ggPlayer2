@@ -5,7 +5,7 @@ import {GGVideo} from "./Video/GGVideo";
 import {GGVideoFactory} from "./Video/GGVideoFactory";
 import {GGStreamView} from "./Views/GGStreamView"
 import {GGStreamApi} from "./GGStreamApi";
-import {PlayerEvents} from "../dist/lib/PlayerEvents";
+
 
 export class GGPlayer extends EventEmitter {
 
